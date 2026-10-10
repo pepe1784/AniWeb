@@ -1,0 +1,62 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Permisos mínimos para publicar en GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build PWA
+        run: npm run build
+        env:
+          # Base path para Vite:
+          #   "/"            -> repo "usuario/usuario.github.io" (user site)
+          #   "/<nombre>/"   -> project site (ej: /AniWeb/)
+          # El Service Worker se registra en <base>/sw.js con scope <base>/.
+          VITE_BASE_PATH: ${{ github.event.repository.name != github.repository_owner && format('/{0}/', github.event.repository.name) || '/' }}
+
+      - name: Prepare GitHub Pages assets
+        run: |
+          touch dist/.nojekyll
+          cp dist/index.html dist/404.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
