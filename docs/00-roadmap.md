@@ -16,17 +16,17 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** review del documento de viabilidad y visto bueno.
 
-## Fase 2 — Arquitectura y decisiones (entregable 2)
+## Fase 2 — Arquitectura y decisiones (entregable 2) (propuesta)
 
-- [ ] Diagrama de arquitectura (Mermaid/ASCII en `docs/02-arquitectura.md`)
-- [ ] Decisiones clave como ADRs en `docs/adr/`:
-  - Framework: Svelte 5 vs SolidJS
-  - `vite-plugin-pwa` (Workbox) vs Service Worker manual
-  - Herramientas WASM: `jco` vs `wit-bindgen`; formato de componentes
-  - Diseño del proxy CORS (lista de dominios, Range, headers)
-  - Esquema de almacenamiento (IndexedDB + OPFS), estrategia de persistencia
-  - Pipeline WebGPU con fallback WebGL/Canvas2D
-- [ ] Pros/contras de cada decisión.
+- [x] Diagrama de arquitectura y capas en `docs/02-arquitectura.md`
+- [x] ADRs en `docs/adr/` (con pros/contras):
+  - ADR-001: framework de frontend (Svelte 5 + Vite SPA)
+  - ADR-002: PWA y Service Worker (`vite-plugin-pwa` + `injectManifest`)
+  - ADR-003: toolchain de extensiones (WIT + Component Model + `jco`)
+  - ADR-004: diseño del proxy CORS (Worker + Docker)
+  - ADR-005: almacenamiento (IndexedDB + OPFS) y persistencia
+  - ADR-006: pipeline WebGPU con fallback WebGL/Canvas2D
+- [ ] Aprobación de la persona para fijar las ADRs como `Aceptada`.
 
 **Criterio de aceptación:** ADRs aprobadas y diagrama revisado.
 
