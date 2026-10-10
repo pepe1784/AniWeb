@@ -1,0 +1,14 @@
+# Contexto de build minimo: la imagen solo necesita app/ e infra/nginx.conf
+**/.git
+.opencode
+**/node_modules
+**/dist
+target
+*.wasm
+*.log
+**/.env
+**/.env.*
+docs
+.github
+.vscode
+.idea

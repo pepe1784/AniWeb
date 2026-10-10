@@ -1,0 +1,28 @@
+# Normalización de fin de línea: LF en todo el repo
+* text=auto eol=lf
+
+# Texto explícito
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.svelte text eol=lf
+*.rs text eol=lf
+*.wit text eol=lf
+*.toml text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+*.conf text eol=lf
+*.nginx text eol=lf
+*.sh text eol=lf
+
+# Binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.wasm binary
