@@ -19,7 +19,7 @@ services:
       - "${CADDY_HTTPS_PORT:-443}:443"
       - "443:443/udp"
     environment:
-      DOMAIN: ${DOMAIN:?Define DOMAIN en infra/.env (ej: aniweb.tudominio.com)}
+      DOMAIN: "${DOMAIN:?Define DOMAIN en infra/.env (ej: aniweb.tudominio.com)}"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
