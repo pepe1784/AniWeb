@@ -1,0 +1,9 @@
+{
+  "name": "Mi Repo de Extensiones",
+  "short-name": "AniWeb",
+  "website": "https://github.com/tu-usuario/tu-repo-extension",
+  "badge-label": "AW",
+  "discord": null,
+  "signing-key-fingerprint": "",
+  "min-api-version": "0.1"
+}

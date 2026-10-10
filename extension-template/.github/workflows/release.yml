@@ -1,4 +1,4 @@
-name: release-extension
+name: release-extension-repo
 
 on:
   pull_request:
@@ -12,8 +12,31 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-publish:
+  # Descubre las extensiones (extensions/<id>/extension-metadata.json) y las
+  # expone como matriz de build.
+  list-extensions:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: set-matrix
+        run: |
+          MATRIX=""
+          for d in extensions/*/; do
+            id=$(node -e "process.stdout.write(require('./$d/extension-metadata.json').id)")
+            MATRIX="$MATRIX\"$id\","
+          done
+          MATRIX=$(printf '%s' "$MATRIX" | sed 's/,$//')
+          echo "matrix=[$MATRIX]" >> "$GITHUB_OUTPUT"
+
+  # Compila cada extension a componente WASM (matriz en paralelo).
+  build:
+    needs: list-extensions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        id: ${{ fromJson(needs.list-extensions.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -28,7 +51,34 @@ jobs:
         run: cargo install cargo-component --version 0.21.1 --locked
 
       - name: Build WASM component
-        run: cargo component build --release
+        env:
+          CARGO_TARGET_DIR: ${{ runner.temp }}/cc-target-${{ matrix.id }}
+        run: cargo component build --release --manifest-path extensions/${{ matrix.id }}/Cargo.toml
+
+      - name: Copy WASM to dist
+        run: |
+          mkdir -p dist
+          cp "${{ runner.temp }}/cc-target-${{ matrix.id }}/wasm32-wasip1/release/"*.wasm dist/${{ matrix.id }}.wasm
+
+      - name: Upload WASM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-${{ matrix.id }}
+          path: dist/
+          if-no-files-found: error
+
+  # Arma el store con las 4 salidas del catalogo y publica en gh-pages.
+  store:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download WASM artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+          merge-multiple: true
 
       # Firma opcional de autenticidad (minisign). Requiere el secret
       # MINISIGN_KEY (contenido de la clave secreta de minisign, en Base64).
@@ -45,13 +95,12 @@ jobs:
 
       - name: Build store index
         env:
-          EXT_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
           EXT_REPO: ${{ github.repository }}
         run: |
           if [ -f /tmp/minisign-secret.key ]; then
             export MINISIGN_SECRET_KEY=/tmp/minisign-secret.key
           fi
-          node scripts/build-index.mjs target/wasm32-wasip1/release/*.wasm
+          node scripts/build-index.mjs
 
       - name: Validate catalog
         run: |
@@ -60,17 +109,22 @@ jobs:
             const { createHash } = require("crypto");
             const idx = JSON.parse(fs.readFileSync("store/index.json", "utf8"));
             if (idx["format-version"] !== 1) throw new Error("format-version invalido");
-            const e = idx.extensions[0];
-            const bytes = fs.readFileSync("store/" + e.id + "/" + e.id + "-" + e.version + ".wasm");
-            if (createHash("sha256").update(bytes).digest("hex") !== e.wasm.sha256) {
-              throw new Error("sha256 no coincide");
+            if (!fs.existsSync("store/index.min.json")) throw new Error("falta index.min.json");
+            if (!fs.existsSync("store/index.pb")) throw new Error("falta index.pb");
+            if (!fs.existsSync("store/repo.json")) throw new Error("falta repo.json");
+            for (const e of idx.extensions) {
+              const bytes = fs.readFileSync("store/" + e.id + "/" + e.id + "-" + e.version + ".wasm");
+              if (createHash("sha256").update(bytes).digest("hex") !== e.wasm.sha256) {
+                throw new Error("sha256 no coincide para " + e.id);
+              }
             }
-            console.log("catalog OK: " + e.id + "@" + e.version);
+            console.log("catalog OK: " + idx.extensions.length + " extension(es)");
           '
 
-      # Publica store/index.json + .wasm en la rama gh-pages. En el repo:
+      # Publica el store en la rama gh-pages. En el repo:
       # Settings -> Pages -> Source: "GitHub Actions".
-      # Catalogo resultante: https://<usuario>.github.io/<repo>/index.json
+      # Catalogo nativo: https://<usuario>.github.io/<repo>/index.json
+      # Ecosistema: index.min.json, index.pb, repo.json (mismo raiz).
       - name: Publish store to GitHub Pages
         if: github.ref_type == 'tag'
         uses: peaceiris/actions-gh-pages@v4

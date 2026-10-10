@@ -14,7 +14,7 @@ mod bindings;
 use bindings::exports::aniweb::extension::extension_api::*;
 
 /// Debe coincidir con "id" de `extension-metadata.json` (lo exige el loader).
-const EXTENSION_ID: &str = "mi-extension";
+const EXTENSION_ID: &str = "example";
 
 struct Extension;
 

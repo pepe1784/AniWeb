@@ -1,6 +1,6 @@
 {
-  "id": "mi-extension",
-  "name": "Mi Extension",
+  "id": "example",
+  "name": "Ejemplo (Stub)",
   "lang": "es",
   "nsfw": "safe",
   "kind": "manga",

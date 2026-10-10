@@ -1,8 +1,8 @@
 [package]
-name = "aniweb-extension"
+name = "aniweb-ext-example"
 version = "0.1.0"
 edition = "2021"
-description = "AniWeb extension template (component WASM)"
+description = "Extension de ejemplo AniWeb (stub, componente WASM)"
 license = "AGPL-3.0-only"
 publish = false
 
