@@ -40,23 +40,24 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** la app (cuando exista el esqueleto, Fase 5/9) se puede desplegar por al menos una ruta y abrirse como PWA instalada. La validación end-to-end queda pendiente del esqueleto.
 
-## Fase 4 — Interfaz WIT de extensiones (entregable 4) (documentada)
+## Fase 4 — Interfaz WIT de extensiones (entregable 4) (aprobada)
 
 - [x] `packages/ext-api/wit/extension.wit`: tipos y world de extensiones (package `aniweb:extension`)
 - [x] `docs/04-wit-extensiones.md`: especificación en lenguaje natural + ejemplo de catálogo `index.json` (SHA-256, minisign opcional, ciclo de vida, límites)
 - [x] Bindings TS generados para el host (`packages/ext-api/src/generated/`, `jco types`) + `package.json` con `npm run types`
 - [ ] Stub de bindings Rust para `ext-sdk` (se genera en la Fase 6 con el toolchain Rust/wit-bindgen)
-- [ ] Confirmación de la persona para pasar a la Fase 5.
+- [x] Aprobación de la persona; Fase 4 fijada como `Aprobada`
 
 **Criterio de aceptación:** la interfaz soporta los casos: metadatos, búsqueda, populares, recientes, detalle, capítulos/episodios, páginas, fuentes de video.
 
-## Fase 5 — Estructura de carpetas y plantilla de repo de extensiones (entregable 5)
+## Fase 5 — Estructura de carpetas y plantilla de repo de extensiones (entregable 5) (documentada)
 
-- [ ] Estructura física del monorepo (según mapa en `SKILL.md`)
-- [ ] Plantilla `extension-template/` con `Cargo.toml`, WIT, CI que compila a WASM, genera hash SHA-256 y publica `index.json`
-- [ ] `docs/05-estructura.md`: árbol documentado
+- [x] Estructura física del monorepo (según mapa en `SKILL.md`); carpetas con README de propósito y fase que las llena
+- [x] Plantilla `extension-template/` con `Cargo.toml`, WIT, CI que compila a WASM, genera hash SHA-256 y publica `index.json` (script de catálogo probado localmente)
+- [x] `docs/05-estructura.md`: árbol documentado
+- [ ] Confirmación de la persona para pasar a la Fase 6.
 
-**Criterio de aceptación:** un repo de extensiones "tienda" generado con la plantilla es publicable y consumible por la app.
+**Criterio de aceptación:** un repo de extensiones "tienda" generado con la plantilla es publicable y consumible por la app (el build Rust queda validado por la CI del template; end-to-end con el loader en la Fase 8).
 
 ## Fase 6 — Extensiones de ejemplo en Rust (entregable 6)
 

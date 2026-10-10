@@ -27,19 +27,21 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 | [docs/02-arquitectura.md](docs/02-arquitectura.md) | Capas, límites de confianza y flujos |
 | [docs/03-despliegue.md](docs/03-despliegue.md) | Despliegue: GitHub Pages, Docker, hosting estático + instalación PWA |
 | [docs/04-wit-extensiones.md](docs/04-wit-extensiones.md) | Contrato WIT de extensiones, catálogo `index.json`, ciclo de vida y límites |
+| [docs/05-estructura.md](docs/05-estructura.md) | Estructura del monorepo y plantilla de repo de extensiones |
 | [docs/adr/](docs/adr/README.md) | Registro de decisiones de arquitectura (ADRs) |
 
-## Estructura (planificada)
+## Estructura
 
-La estructura física se crea por fases conforme se implementa:
+La estructura se crea por fases; cada carpeta ya creada tiene su README con propósito, estado y fase pendiente. Árbol y detalle en [docs/05-estructura.md](docs/05-estructura.md):
 
 ```
-app/                  PWA (Svelte/Solid + Vite): lector, reproductor, Service Worker
+app/                  PWA (Svelte 5 + Vite): lector, reproductor, Service Worker
 packages/ext-api/     Definiciones WIT del runtime de extensiones + bindings TS
 packages/ext-host/    Host functions en el navegador (http, parser, crypto…)
 packages/ext-loader/  Carga de .wasm en Workers aislados, hash, permisos
 crates/ext-sdk/       SDK Rust para escribir extensiones
 extensions/           Extensiones de ejemplo (manga / anime)
+extension-template/   Plantilla de repo de extensiones con CI (build, hash, index.json)
 proxy/                Proxy CORS: Cloudflare Worker + Docker
 infra/                Dockerfile multi-etapa, nginx/Caddy, compose
 .github/workflows/    CI/CD: build, GitHub Pages, repos de extensiones
