@@ -73,10 +73,10 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 ## Fase 7 — Proxy CORS mínimo (entregable 7)
 
-- [ ] `proxy/cloudflare-worker/` (plantilla con botón de despliegue)
-- [ ] `proxy/docker/` (contenedor opcional del compose)
-- [ ] Validación de dominios permitidos, soporte Range y headers personalizados, límites
-- [ ] `docs/07-proxy-cors.md` con advertencias de privacidad
+- [x] `proxy/cloudflare-worker/` (plantilla con botón de despliegue)
+- [x] `proxy/docker/` (contenedor opcional del compose)
+- [x] Validación de dominios permitidos, soporte Range y headers personalizados, límites
+- [x] `docs/07-proxy-cors.md` con advertencias de privacidad
 
 **Criterio de aceptación:** el proxy sirve una petición de dominio permitido con y sin Range, y rechaza dominios no permitidos.
 

@@ -23,7 +23,9 @@ AniWeb/
 │   └── ext-sdk/                SDK Rust para extensiones (wit-bindgen)         -> Fase 6
 ├── extensions/                 Extensiones de ejemplo (manga / anime)          -> Fase 6
 ├── extension-template/         Plantilla de repo de extensiones                -> Fase 5 (hecho)
-├── proxy/                      Proxy CORS: Cloudflare Worker + Docker          -> Fase 7
+├── proxy/                      Proxy CORS: Cloudflare Worker + Docker          -> Fase 7 (hecho)
+│   ├── cloudflare-worker/      Worker (nucleo compartido + entrada) + wrangler.toml
+│   └── docker/                 Adaptador node:http + Dockerfile + tests
 ├── infra/                      Docker (multi-etapa), nginx, Caddy, compose,    -> Fase 3 (hecho)
 │                               manifest de la PWA
 ├── .github/workflows/
@@ -37,6 +39,7 @@ AniWeb/
 │   ├── 04-wit-extensiones.md
 │   ├── 05-estructura.md        (este documento)
 │   ├── 06-ext-sdk.md
+│   ├── 07-proxy-cors.md
 │   └── adr/                    ADR-001..007 (Aceptadas)
 ├── README.md, LICENSE (AGPL-3.0), CONTRIBUTING.md
 └── .gitignore, .gitattributes, .editorconfig, .dockerignore
@@ -50,10 +53,10 @@ AniWeb/
 | `packages/ext-api/` | WIT (fuente de verdad) + bindings TS | 4 | hecho |
 | `packages/ext-host/` | host functions en el navegador | 8 | por crear |
 | `packages/ext-loader/` | Worker aislado, SHA-256, permisos, límites | 8 | por crear |
-| `crates/ext-sdk/` | bindings Rust + helpers | 6 | por crear |
-| `extensions/` | extensiones de ejemplo | 6 | por crear |
+| `crates/ext-sdk/` | bindings Rust + helpers | 6 | hecho |
+| `extensions/` | registro de repos externos de extensiones | 6 | hecho |
 | `extension-template/` | plantilla de repo de extensiones | 5 | hecho |
-| `proxy/` | proxy CORS mínimo (Worker + Docker) | 7 | por crear |
+| `proxy/` | proxy CORS mínimo (Worker + Docker) | 7 | hecho |
 | `infra/` | despliegue autoalojado (Docker/nginx/Caddy) | 3 | hecho |
 | `.github/workflows/deploy.yml` | CI/CD de la app | 3 | hecho |
 | `docs/` | especificaciones y ADRs | todas | por fase |

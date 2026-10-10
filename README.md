@@ -7,7 +7,7 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 
 ## Estado
 
-- **Fase actual:** 4/10 — interfaz WIT de extensiones (documentada, pendiente de confirmación)
+- **Fase actual:** 7/10 — proxy CORS mínimo (entregado, pendiente de confirmación)
 - Ver [docs/00-roadmap.md](docs/00-roadmap.md) para el plan completo por fases.
 
 ## Principios
@@ -29,6 +29,7 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 | [docs/04-wit-extensiones.md](docs/04-wit-extensiones.md) | Contrato WIT de extensiones, catálogo `index.json`, ciclo de vida y límites |
 | [docs/05-estructura.md](docs/05-estructura.md) | Estructura del monorepo y plantilla de repo de extensiones |
 | [docs/06-ext-sdk.md](docs/06-ext-sdk.md) | SDK de extensiones, toolchain en Windows, formatos del ecosistema y extensiones de ejemplo |
+| [docs/07-proxy-cors.md](docs/07-proxy-cors.md) | Proxy CORS: contrato HTTP, despliegue (Worker/Docker), variables y privacidad |
 | [docs/adr/](docs/adr/README.md) | Registro de decisiones de arquitectura (ADRs) |
 
 ## Estructura
