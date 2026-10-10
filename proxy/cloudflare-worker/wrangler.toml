@@ -1,0 +1,17 @@
+# Proxy CORS de AniWeb (Cloudflare Worker).
+# Despliegue: botón "Deploy to Cloudflare Workers" o `npx wrangler deploy`.
+# El secreto PROXY_TOKEN (opcional) se define con `npx wrangler secret put PROXY_TOKEN`.
+
+name = "aniweb-cors-proxy"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# Variables no secretas. Todas opcionales (ver src/proxy-core.mjs).
+[vars]
+# Lista de dominios permitidos separada por comas. Vacía = confiar en la
+# cabecera X-AniWeb-Allow de cada petición (proxy propio).
+PROXY_ALLOWED_DOMAINS = ""
+PROXY_ALLOW_METHODS = "GET,HEAD,POST"
+PROXY_MAX_BYTES = "33554432"
+PROXY_TIMEOUT_MS = "20000"
+PROXY_MAX_REDIRECTS = "3"

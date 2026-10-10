@@ -1,0 +1,5 @@
+# Contexto de build del proxy CORS (proxy/): solo se copian el núcleo y el
+# adaptador, así que se excluye lo demás.
+**/node_modules
+**/.git
+docker/test
