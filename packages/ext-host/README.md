@@ -21,8 +21,8 @@ Consume los bindings TS de `packages/ext-api/src/generated/`.
 | `src/crypto-host.mjs` | `crypto` (`base64-encode`/`base64-decode`/`sha256`/`md5`) | listo + tests |
 | `src/storage-host.mjs` | `storage` (`get`/`set`/`keys`), backend inyectable | listo + tests |
 | `src/http.mjs` | `http` (allowlist + proxy + Range), transporte inyectable | listo + tests + validado en navegador |
-| `parsing` | parser HTML con selectores CSS | pendiente |
-| `logging` | bus de eventos | pendiente |
+| `src/parsing-host.mjs` | `parsing` (HTML + subconjunto CSS: tag/id/clase/attr, descendiente e hijo) | listo + tests |
+| `src/logging-host.mjs` | `logging` (`log`) | listo + tests |
 | puente Worker (jco) | instanciar el componente con estas imports | pendiente |
 
 Pruebas (Node, sin navegador):
