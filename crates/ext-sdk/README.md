@@ -26,9 +26,14 @@ let paginas = sdk::parsing::parse(&h, html_bruto).select(".page img");
 - `types` — tipos espejo del WIT: `Header`, `Range`, `HttpResponse`, `HttpError`,
   `JsonValue`, `JsonError`, `LogLevel`.
 - `host` — `Host` (fn pointers de todas las host functions) + macro `host!(bindings)`.
-- `http` — `get`, `get_text`, `get_json_doc`, `get_with_headers` (rango opcional).
+- `http` — `get`, `get_text`, `get_json_doc`, `get_json`, `get_with_headers` (rango opcional).
 - `json` — `JsonDoc` con RAII (dropea el handle en el host): `get`, `get_str`,
   `get_all`, `get_all_str`, `length`, `get_bool`, `get_f64`.
+- `json_value` — `Json`: parser JSON puro (sin deps) con traversal completo de
+  objetos/arrays anidados (`get`, `index`, `path`, `first_str`). La interfaz
+  `json` del host solo devuelve hojas por path porque el contrato WIT no admite
+  tipos recursivos; para APIs con estructuras anidadas (mapas localizados,
+  relaciones) usa `http::get_json` y este tipo. El parseo corre en el sandbox WASM.
 - `parsing` — `HtmlDoc`/`Element` con RAII: `select`, `attribute`, `text`,
   `children`, `parent`, `html`.
 - `crypto` — `base64_encode/decode`, `sha256_hex/bytes`, `md5_hex/bytes`, `hex`.

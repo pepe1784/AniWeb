@@ -2,6 +2,7 @@
 
 use crate::host::Host;
 use crate::json::{parse_doc, JsonDoc};
+use crate::json_value::Json;
 use crate::types::{Header, HttpError, Range, HttpResponse};
 
 /// Llamada directa a `http::request` con todos los parametros.
@@ -49,4 +50,14 @@ pub fn get_json_doc<'a>(host: &'a Host, url: &str) -> Result<JsonDoc<'a>, HttpEr
     let text = String::from_utf8(bytes)
         .map_err(|e| HttpError::Network(format!("body no es UTF-8: {e}")))?;
     parse_doc(host, &text).map_err(|e| HttpError::Network(e.to_string()))
+}
+
+/// GET parseando el body como JSON puro en la propia extension (`Json`).
+///
+/// A diferencia de `get_json_doc`, el arbol vive en la extension, de modo que
+/// se pueden recorrer objetos y arrays anidados (mapas localizados, relaciones,
+/// etc.). El parseo corre dentro del sandbox WASM.
+pub fn get_json(host: &Host, url: &str) -> Result<Json, HttpError> {
+    let text = get_text(host, url)?;
+    Json::parse(&text).map_err(HttpError::Network)
 }
