@@ -80,7 +80,8 @@ docker compose -f infra/docker-compose.yml -f infra/docker-compose.caddy.yml up 
 | --- | --- | --- |
 | `WEB_PORT` | `.env` | Puerto publicado de la app |
 | `VITE_BASE_PATH` | `.env` (argumento de build) | Base path de la app |
-| `PROXY_PORT` / `PROXY_ALLOWED_DOMAINS` | `.env` | Proxy CORS opcional |
+| `PROXY_PORT` / `PROXY_ALLOWED_DOMAINS` | `.env` | Proxy CORS opcional: puerto y lista de dominios permitidos |
+| `PROXY_TOKEN` / `PROXY_MAX_BYTES` / `PROXY_TIMEOUT_MS` | `.env` | Proxy CORS opcional: token compartido y límites de tamaño/tiempo |
 | `DOMAIN` | `.env` | Caddy: dominio con Let's Encrypt |
 
 - Healthchecks: `web` y `cors-proxy` comprueban `/healthz` (nginx y el proxy lo exponen). Docker marca el contenedor unhealthy si fallan 3 veces.
