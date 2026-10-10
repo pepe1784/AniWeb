@@ -50,14 +50,15 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** la interfaz soporta los casos: metadatos, búsqueda, populares, recientes, detalle, capítulos/episodios, páginas, fuentes de video.
 
-## Fase 5 — Estructura de carpetas y plantilla de repo de extensiones (entregable 5) (documentada)
+## Fase 5 — Estructura de carpetas y plantilla de repo de extensiones (entregable 5) (cerrada)
 
 - [x] Estructura física del monorepo (según mapa en `SKILL.md`); carpetas con README de propósito y fase que las llena
-- [x] Plantilla `extension-template/` con `Cargo.toml`, WIT, CI que compila a WASM, genera hash SHA-256 y publica `index.json` (script de catálogo probado localmente)
+- [x] Plantilla `extension-template/` con `Cargo.toml`, WIT, CI que compila a WASM, genera hash SHA-256 y publica `index.json`
 - [x] `docs/05-estructura.md`: árbol documentado
-- [ ] Confirmación de la persona para pasar a la Fase 6.
+- [x] Validación de build local: `cargo-component 0.21.1` (toolchain GNU + w64devkit solo para import libs faltantes), el template compila a componente WASM (80 KB, formato v13), `build-index.mjs` genera el catálogo con SHA-256 real
+- [x] Confirmación de la persona para pasar a la Fase 6.
 
-**Criterio de aceptación:** un repo de extensiones "tienda" generado con la plantilla es publicable y consumible por la app (el build Rust queda validado por la CI del template; end-to-end con el loader en la Fase 8).
+**Criterio de aceptación:** un repo de extensiones "tienda" generado con la plantilla es publicable y consumible por la app (build Rust validado localmente con el toolchain fijado; end-to-end con el loader en la Fase 8).
 
 ## Fase 6 — Extensiones de ejemplo en Rust (entregable 6)
 

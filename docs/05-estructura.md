@@ -97,12 +97,13 @@ Con el secret `MINISIGN_KEY`, la CI instala `minisign` y firma el `.wasm`; la fi
 ## Validación de la Fase 5
 
 1. Estructura física creada y documentada en este documento.
-2. `scripts/build-index.mjs` probado localmente: genera `index.json` correcto, calcula SHA-256 y tamaño, y rechaza un `EXT_VERSION` que no coincide con el metadata (verificado con un `.wasm` de prueba).
-3. El build Rust **no se pudo validar en esta máquina** (sin Rust/cargo; toolchain rustup disponible solo en CI). El workflow de la plantilla lo compila y comprueba en cada PR del repo fork; en cuanto exista un repo de extensiones real (Fase 6) se valida end-to-end con el loader (Fase 8).
+2. `scripts/build-index.mjs` probado localmente: genera `index.json` correcto, calcula SHA-256 y tamaño, y rechaza un `EXT_VERSION` que no coincide con el metadata (verificado con el `.wasm` real del build de esta fase).
+3. Build Rust validado localmente: `cargo-component 0.21.1` instalado sobre toolchain GNU (rustup, target `wasm32-wasip1`; w64devkit solo aporta import libs faltantes, p. ej. `ktmw32`, sin tocar `PATH`). El template compila con `cargo component build --release` a un componente WASM válido (80 KB, formato componente v13) con bindings de `wit-bindgen 0.41.0`, y `EXTENSION_ID` coincide con el `id` del metadata. Detalles de la receta en `docs/06-ext-sdk.md`.
+4. End-to-end con el loader real queda para la Fase 8 (cuando exista `ext-loader`).
 
 ## Pendiente para fases siguientes
 
-- **Fase 6**: `crates/ext-sdk` con bindings Rust, extensiones de ejemplo (MangaDex manga, anime legal) usando esta plantilla, y validación end-to-end build + loader.
+- **Fase 6**: `crates/ext-sdk` con bindings Rust de alto nivel, extensiones de ejemplo (manga y anime) usando esta plantilla, y CI de ejemplo; el stub de bindings Rust del roadmap de la Fase 4 se completa aquí.
 - **Fase 7**: `proxy/` (Worker + Docker) que cumpla lo que `http.request` espera.
 - **Fase 8**: `ext-loader` + `ext-host` consumiendo `packages/ext-api` y el catálogo de la plantilla.
 - **Fase 9**: `app/` (esqueleto desplegable y MVP lector/reproductor).
