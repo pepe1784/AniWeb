@@ -40,11 +40,13 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** la app (cuando exista el esqueleto, Fase 5/9) se puede desplegar por al menos una ruta y abrirse como PWA instalada. La validación end-to-end queda pendiente del esqueleto.
 
-## Fase 4 — Interfaz WIT de extensiones (entregable 4)
+## Fase 4 — Interfaz WIT de extensiones (entregable 4) (documentada)
 
-- [ ] `packages/ext-api/wit/*.wit`: manifest descriptor, tipos y world de extensiones
-- [ ] `docs/04-wit-extensiones.md`: especificación en lenguaje natural + ejemplo de entrada de catálogo de extensiones (index.json)
-- [ ] Bindings TS generados para el host y stub de bindings Rust para `ext-sdk`
+- [x] `packages/ext-api/wit/extension.wit`: tipos y world de extensiones (package `aniweb:extension`)
+- [x] `docs/04-wit-extensiones.md`: especificación en lenguaje natural + ejemplo de catálogo `index.json` (SHA-256, minisign opcional, ciclo de vida, límites)
+- [x] Bindings TS generados para el host (`packages/ext-api/src/generated/`, `jco types`) + `package.json` con `npm run types`
+- [ ] Stub de bindings Rust para `ext-sdk` (se genera en la Fase 6 con el toolchain Rust/wit-bindgen)
+- [ ] Confirmación de la persona para pasar a la Fase 5.
 
 **Criterio de aceptación:** la interfaz soporta los casos: metadatos, búsqueda, populares, recientes, detalle, capítulos/episodios, páginas, fuentes de video.
 

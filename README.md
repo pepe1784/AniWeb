@@ -7,7 +7,7 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 
 ## Estado
 
-- **Fase actual:** 0/10 — base del repositorio
+- **Fase actual:** 4/10 — interfaz WIT de extensiones (documentada, pendiente de confirmación)
 - Ver [docs/00-roadmap.md](docs/00-roadmap.md) para el plan completo por fases.
 
 ## Principios
@@ -26,6 +26,7 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 | [docs/01-viabilidad-navegador-pwa.md](docs/01-viabilidad-navegador-pwa.md) | Qué es viable y qué no en navegador/PWA |
 | [docs/02-arquitectura.md](docs/02-arquitectura.md) | Capas, límites de confianza y flujos |
 | [docs/03-despliegue.md](docs/03-despliegue.md) | Despliegue: GitHub Pages, Docker, hosting estático + instalación PWA |
+| [docs/04-wit-extensiones.md](docs/04-wit-extensiones.md) | Contrato WIT de extensiones, catálogo `index.json`, ciclo de vida y límites |
 | [docs/adr/](docs/adr/README.md) | Registro de decisiones de arquitectura (ADRs) |
 
 ## Estructura (planificada)
