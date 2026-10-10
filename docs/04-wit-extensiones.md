@@ -268,4 +268,4 @@ npm run check   # verifica que no haya diffs (para CI)
 - **Fase 5**: plantilla de repo de extensiones con CI que publique `index.json` + hash (consumidor de esta especificacion).
 - **Fase 6**: `crates/ext-sdk` con bindings Rust generados por wit-bindgen (requiere toolchain Rust/cargo, no disponible en esta maquina) y extensiones de ejemplo.
 - **Fase 7**: proxy CORS que cumpla lo que `http.request` espera (Range, headers personalizados, dominios permitidos).
-- **Fase 8**: loader (descarga, SHA-256, instanciacion en Worker, permisos, limites de memoria/tiempo) y host functions en el navegador.
+- **Fase 8 (entregada)**: loader (descarga, SHA-256, instanciacion en Worker, permisos, limites de memoria/tiempo), host functions en el navegador y CSP. Detalle y compensaciones en `docs/08-loader.md`; el catalogo admite desde esa fase un `bundle` transpilado con jco para correr en el navegador.

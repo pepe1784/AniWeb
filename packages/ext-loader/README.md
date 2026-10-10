@@ -14,8 +14,13 @@ Carga las extensiones del catálogo (WASM componente) en Web Workers aislados:
 | Módulo | Responsabilidad | Estado |
 | --- | --- | --- |
 | `src/verify.mjs` | SHA-256 (WebCrypto) + tamaño del `.wasm` contra el catálogo | listo + tests |
+| `src/catalog.mjs` | `index.json` v1: validación, selección de última versión, resolución de URLs | listo + tests |
+| `src/limits.mjs` | presupuestos tiempo/memoria/respuestas + RPC con timeout (termina el Worker) | listo + tests |
+| `src/loader.mjs` | instalación (fetch + verificación), permisos desde manifest, sandbox Worker, actualizaciones | listo + tests |
+| `src/dispatch.mjs` | despacho de llamadas del lado Worker (protocolo del sandbox) | listo + tests |
+| `src/run-extension-worker.mjs` | entry del Worker: instancia el componente tras fijar la config del host | listo (E2E en navegador) |
+| `src/csp.mjs` | política CSP estricta + directivas mínimas de instanciación WASM | listo + tests |
 | `browser-e2e/` | instanciación real del componente (jco) en un Worker + E2E | validado en Chromium |
-| permisos, límites de memoria/tiempo y actualizaciones | pendiente |
 
 Pruebas (Node, sin navegador):
 
