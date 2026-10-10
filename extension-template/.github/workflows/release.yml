@@ -1,0 +1,80 @@
+name: release-extension
+
+on:
+  pull_request:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust with wasip1 target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip1
+
+      # Toolchain fijado: cargo-component 0.21.1 (wit-bindgen 0.41). Ver
+      # extension-template/README.md para como actualizarlo.
+      - name: Install cargo-component (pinned)
+        run: cargo install cargo-component --version 0.21.1 --locked
+
+      - name: Build WASM component
+        run: cargo component build --release
+
+      # Firma opcional de autenticidad (minisign). Requiere el secret
+      # MINISIGN_KEY (contenido de la clave secreta de minisign, en Base64).
+      # Sin el secret, la integridad queda cubierta por el SHA-256.
+      - name: Setup minisign (opcional)
+        env:
+          MINISIGN_KEY: ${{ secrets.MINISIGN_KEY }}
+        run: |
+          if [ -n "$MINISIGN_KEY" ]; then
+            sudo apt-get update
+            sudo apt-get install -y minisign
+            printf '%s' "$MINISIGN_KEY" > /tmp/minisign-secret.key
+          fi
+
+      - name: Build store index
+        env:
+          EXT_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          EXT_REPO: ${{ github.repository }}
+        run: |
+          if [ -f /tmp/minisign-secret.key ]; then
+            export MINISIGN_SECRET_KEY=/tmp/minisign-secret.key
+          fi
+          node scripts/build-index.mjs target/wasm32-wasip1/release/*.wasm
+
+      - name: Validate catalog
+        run: |
+          node -e '
+            const fs = require("fs");
+            const { createHash } = require("crypto");
+            const idx = JSON.parse(fs.readFileSync("store/index.json", "utf8"));
+            if (idx["format-version"] !== 1) throw new Error("format-version invalido");
+            const e = idx.extensions[0];
+            const bytes = fs.readFileSync("store/" + e.id + "/" + e.id + "-" + e.version + ".wasm");
+            if (createHash("sha256").update(bytes).digest("hex") !== e.wasm.sha256) {
+              throw new Error("sha256 no coincide");
+            }
+            console.log("catalog OK: " + e.id + "@" + e.version);
+          '
+
+      # Publica store/index.json + .wasm en la rama gh-pages. En el repo:
+      # Settings -> Pages -> Source: "GitHub Actions".
+      # Catalogo resultante: https://<usuario>.github.io/<repo>/index.json
+      - name: Publish store to GitHub Pages
+        if: github.ref_type == 'tag'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./store
+          force_orphan: true
