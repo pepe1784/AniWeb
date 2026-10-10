@@ -28,6 +28,7 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 | [docs/03-despliegue.md](docs/03-despliegue.md) | Despliegue: GitHub Pages, Docker, hosting estático + instalación PWA |
 | [docs/04-wit-extensiones.md](docs/04-wit-extensiones.md) | Contrato WIT de extensiones, catálogo `index.json`, ciclo de vida y límites |
 | [docs/05-estructura.md](docs/05-estructura.md) | Estructura del monorepo y plantilla de repo de extensiones |
+| [docs/06-ext-sdk.md](docs/06-ext-sdk.md) | SDK de extensiones, toolchain en Windows, formatos del ecosistema y extensiones de ejemplo |
 | [docs/adr/](docs/adr/README.md) | Registro de decisiones de arquitectura (ADRs) |
 
 ## Estructura

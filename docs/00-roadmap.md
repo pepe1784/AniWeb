@@ -62,12 +62,12 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 ## Fase 6 — Extensiones de ejemplo en Rust (entregable 6)
 
-- [x] `crates/ext-sdk`: SDK Rust de alto nivel sobre wit-bindgen (helpers: http, json, parsing, crypto, logging, storage, url) con macro `host!`
-- [ ] Plantilla de repo de extensiones multi-extension (varias extensiones por repo, como el ecosistema Aniyomi/Keiyoushi)
-- [ ] Catálogo de la plantilla en 4 formatos: nativo `index.json` + ecosistema `index.min.json`, `index.pb` (protobuf, esquemas de Mihon) y `repo.json`
-- [ ] Repos externos de ejemplo (no en el monorepo): manga con API pública (MangaDex) y anime con API pública (Consumet)
-- [ ] Extensión manga y anime compiladas a `.wasm` y validadas localmente con el toolchain fijado
-- [ ] `docs/06-ext-sdk.md` (uso del SDK, receta de toolchain en Windows, formatos del ecosistema, por qué `.apk` no se traduce a `.wasm`) + ADR-007
+- [x] `crates/ext-sdk`: SDK Rust de alto nivel sobre wit-bindgen (helpers: http, json, parsing, crypto, logging, storage, url, text) con macro `host!`, `json_value` (parser JSON recursivo) y tests
+- [x] Plantilla de repo de extensiones multi-extension (varias extensiones por repo, como el ecosistema Aniyomi/Keiyoushi)
+- [x] Catálogo de la plantilla en 4 formatos: nativo `index.json` + ecosistema `index.min.json`, `index.pb` (protobuf, esquemas de Mihon) y `repo.json`
+- [x] Repos externos de ejemplo (no en el monorepo): manga **MangaOni** (`manga-oni.com`) y anime **AnimeAV1** (`animeav1.com`, portado de `yuzono/anime-extensions`). Consumet descartado (HTTP 451, caído globalmente).
+- [x] Extensión manga y anime compiladas a `.wasm` y validadas localmente con el toolchain fijado
+- [x] `docs/06-ext-sdk.md` (uso del SDK, receta de toolchain en Windows, formatos del ecosistema, por qué `.apk` no se traduce a `.wasm`) + ADR-007
 
 **Criterio de aceptación:** ambas extensiones compilan a `.wasm` y pasan el loader (Fase 8) en un test; los catálogos `index.min.json`/`index.pb` se generan y validan.
 

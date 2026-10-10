@@ -12,5 +12,6 @@ Formato: ver `0000-template.md`.
 | ADR-004 | Diseño del proxy CORS | Aceptada |
 | ADR-005 | Almacenamiento y persistencia | Aceptada |
 | ADR-006 | Pipeline de procesamiento (WebGPU con fallback) | Aceptada |
+| ADR-007 | Extensiones en repos externos y portado de fuentes (no conversión de APK) | Aceptada |
 
 Estados posibles: `Propuesta`, `Aceptada`, `Rechazada`, `Reemplazada por ADR-YYY`.

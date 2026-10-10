@@ -36,7 +36,8 @@ AniWeb/
 │   ├── 03-despliegue.md
 │   ├── 04-wit-extensiones.md
 │   ├── 05-estructura.md        (este documento)
-│   └── adr/                    ADR-001..006 (Aceptadas)
+│   ├── 06-ext-sdk.md
+│   └── adr/                    ADR-001..007 (Aceptadas)
 ├── README.md, LICENSE (AGPL-3.0), CONTRIBUTING.md
 └── .gitignore, .gitattributes, .editorconfig, .dockerignore
 ```
