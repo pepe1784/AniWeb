@@ -11,19 +11,19 @@ Una app de anime + manga tipo Aniyomi **sin APK** es viable para el ~100% de las
 
 | Funcionalidad | Estado | Nota clave |
 | --- | --- | --- |
-| Interfaz SPA + PWA instalable | ✅ viable | Sin limitaciones relevantes |
-| Lector de manga (imágenes) | ✅ viable | `<img>` no está sujeto a CORS para renderizar |
-| APIs públicas con CORS abierto (MangaDex, AniList…) | ✅ viable | Sin proxy |
-| Video directo en `mp4`/`webm` | ✅ viable | `<video>` reproduce sin CORS |
-| HLS/DASH con hls.js/dash.js + MSE | ⚠️ depende de CORS | Segmentos requieren CORS → proxy; HLS nativo en Safari sí funciona |
-| Parsear HTML/JSON de fuentes | ⚠️ requiere proxy | Casi ningún sitio de anime/manga envía `Access-Control-Allow-Origin` |
-| WebAssembly + Web Workers | ✅ viable | Base del runtime de extensiones |
-| WebGPU | ⚠️ según navegador | Chrome/Edge/Safari-iOS 26+ ✅; Firefox aún deshabilitado por defecto (2026) → fallback obligatorio |
-| IndexedDB / OPFS | ✅ viable | Con cuotas y riesgo de purga en iOS |
-| Descargas masivas en segundo plano | ❌ no fiable | Ver sección 4 |
-| OAuth AniList | ✅ viable | PKCE sin `client_secret` |
-| OAuth MyAnimeList | ⚠️ compromiso | Requiere `client_secret` → helper/proxy o entrada manual |
-| Media Session / Picture-in-Picture | ✅ viable | Con matices en iOS |
+| Interfaz SPA + PWA instalable | Sí | Sin limitaciones relevantes |
+| Lector de manga (imágenes) | Sí | `<img>` no está sujeto a CORS para renderizar |
+| APIs públicas con CORS abierto (MangaDex, AniList…) | Sí | Sin proxy |
+| Video directo en `mp4`/`webm` | Sí | `<video>` reproduce sin CORS |
+| HLS/DASH con hls.js/dash.js + MSE | Parcial | Segmentos requieren CORS → proxy; HLS nativo en Safari sí funciona |
+| Parsear HTML/JSON de fuentes | Con proxy | Casi ningún sitio de anime/manga envía `Access-Control-Allow-Origin` |
+| WebAssembly + Web Workers | Sí | Base del runtime de extensiones |
+| WebGPU | Parcial | Chrome/Edge/Safari-iOS 26+ sí; Firefox aún deshabilitado por defecto (2026) → fallback obligatorio |
+| IndexedDB / OPFS | Sí | Con cuotas y riesgo de purga en iOS |
+| Descargas masivas en segundo plano | No | Ver sección 4 |
+| OAuth AniList | Sí | PKCE sin `client_secret` |
+| OAuth MyAnimeList | Parcial | Requiere `client_secret` → helper/proxy o entrada manual |
+| Media Session / Picture-in-Picture | Sí | Con matices en iOS |
 
 ## 2. Por qué imágenes y video directo funcionan sin proxy
 
@@ -75,16 +75,16 @@ Una app de anime + manga tipo Aniyomi **sin APK** es viable para el ~100% de las
 
 | Navegador | Estado |
 | --- | --- |
-| Chrome / Edge (desktop y Android) | ✅ activo por defecto desde v113 |
-| Safari desktop | ⚠️ parcial (26+; experimental antes) |
-| Safari iOS 26+ | ✅ soportado |
-| Firefox | ❌ aún **deshabilitado** por defecto |
+| Chrome / Edge (desktop y Android) | Sí (activo por defecto desde v113) |
+| Safari desktop | Parcial (26+; experimental antes) |
+| Safari iOS 26+ | Sí (26+) |
+| Firefox | No (aún deshabilitado por defecto) |
 
 - El pipeline WebGPU (reescalado estilo Anime4K, mejora de páginas, OCR/traducción con ONNX/Transformers.js) es **opcional y debe tener detección de soporte + fallback WebGL/Canvas2D desde el primer día**. Nunca puede ser un requisito.
 
 ## 8. OAuth y respaldos
 
-- **AniList:** flujo PKCE sin `client_secret` → 100% client-side. ✅
+- **AniList:** flujo PKCE sin `client_secret` → 100% client-side.
 - **MyAnimeList:** requiere `client_secret` (público pero detectable) y el flujo de app instalada no da refresh tokens sin backend → compromiso documentado: Worker/proxy OAuth del propio usuario, o entrada manual del token.
 - **Respaldo a Gist o repo privado:** OAuth de GitHub con PKCE es viable sin backend; el usuario elige destino y credenciales con su propia cuenta. Alternativa sin red: exportar/importar JSON local (siempre disponible).
 

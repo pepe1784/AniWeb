@@ -2,14 +2,14 @@
 
 Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguiente hasta que la persona confirma la anterior. Cada fase cierra con sus entregables commiteados y documentados.
 
-## Fase 0 — Base del repositorio ✅ (hecha)
+## Fase 0 — Base del repositorio (hecha)
 
 - [x] Skill de proyecto en `.opencode/skills/aniweb`
 - [x] README, LICENSE (AGPL-3.0), `.gitignore`
 - [x] Git iniciado con commits pequeños y claros (Conventional Commits)
 - [x] Remote `origin` → `https://github.com/pepe1784/AniWeb.git`
 
-## Fase 1 — Viabilidad en navegador/PWA ✅ (documentada)
+## Fase 1 — Viabilidad en navegador/PWA (documentada)
 
 - [x] `docs/01-viabilidad-navegador-pwa.md`: qué es viable, qué tiene límites y qué **no** se puede hacer sin APK.
 - [ ] Confirmación de la persona para pasar a la Fase 2.
