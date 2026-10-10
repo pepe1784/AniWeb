@@ -1,0 +1,21 @@
+[package]
+name = "aniweb-extension"
+version = "0.1.0"
+edition = "2021"
+description = "AniWeb extension template (component WASM)"
+license = "AGPL-3.0-only"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Runtime generado por cargo-component; la version debe corresponder con el
+# wit-bindgen que empaqueta la version de cargo-component fijada en CI (0.21.1).
+wit-bindgen-rt = { version = "0.41.0", features = ["bitflags"] }
+
+[package.metadata.component]
+# Debe coincidir con el paquete WIT de wit/extension.wit
+package = "aniweb:extension"
+
+[workspace]

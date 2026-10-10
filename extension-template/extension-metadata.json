@@ -1,0 +1,16 @@
+{
+  "id": "mi-extension",
+  "name": "Mi Extension",
+  "lang": "es",
+  "nsfw": "safe",
+  "kind": "manga",
+  "version": "0.1.0",
+  "min-api-version": "0.1",
+  "sites": [
+    "api.ejemplo.net",
+    "uploads.ejemplo.net"
+  ],
+  "default-proxy": "https://proxy.aniweb.example.net",
+  "author": "Tu Nombre",
+  "homepage": "https://github.com/tu-usuario/tu-repo-extension"
+}
