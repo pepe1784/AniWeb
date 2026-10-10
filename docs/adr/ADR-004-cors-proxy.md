@@ -1,6 +1,6 @@
 # ADR-004: Diseño del proxy CORS
 
-- Estado: Propuesta
+- Estado: Aceptada
 - Fecha: 2026-10-09
 - Fase: 2
 - Decisores: equipo AniWeb

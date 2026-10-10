@@ -1,6 +1,6 @@
 # ADR-001: Framework de frontend
 
-- Estado: Propuesta
+- Estado: Aceptada
 - Fecha: 2026-10-09
 - Fase: 2
 - Decisores: equipo AniWeb

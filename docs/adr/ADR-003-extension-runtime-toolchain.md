@@ -1,6 +1,6 @@
 # ADR-003: Toolchain del runtime de extensiones
 
-- Estado: Propuesta
+- Estado: Aceptada
 - Fecha: 2026-10-09
 - Fase: 2
 - Decisores: equipo AniWeb

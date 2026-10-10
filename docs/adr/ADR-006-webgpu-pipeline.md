@@ -1,6 +1,6 @@
 # ADR-006: Pipeline de procesamiento (WebGPU con fallback)
 
-- Estado: Propuesta
+- Estado: Aceptada
 - Fecha: 2026-10-09
 - Fase: 2
 - Decisores: equipo AniWeb
