@@ -8,6 +8,18 @@
 const KINDS = new Set(["manga", "anime", "both"]);
 const NSFW = new Set(["safe", "suggestive", "nsfw"]);
 const SHA256_RE = /^[0-9a-fA-F]{64}$/;
+// Esquemas que el loader nunca debe descargar desde un catalogo.
+const FORBIDDEN_SCHEMES = /^([a-z][a-z0-9+.-]*):/i;
+
+// URL del artefacto: http(s) absoluta, protocolo-relativa, o ruta relativa al
+// catalogo (build-index.mjs emite relativas cuando no se fija EXT_REPO).
+function isPlainUrlOrPath(value) {
+  if (typeof value !== "string" || !value.trim()) return false;
+  if (/[\s<>{}\\]/.test(value)) return false;
+  const scheme = value.match(FORBIDDEN_SCHEMES);
+  if (scheme) return /^https?$/i.test(scheme[1]);
+  return true;
+}
 
 // Valida una entrada del catalogo. Devuelve { ok, value } o { ok: false, reason }.
 export function validateEntry(entry) {
@@ -32,8 +44,8 @@ export function validateEntry(entry) {
   }
   const wasm = entry.wasm;
   if (!wasm || typeof wasm !== "object") return { ok: false, reason: "falta 'wasm'" };
-  if (typeof wasm.url !== "string" || !/^https?:\/\//i.test(wasm.url)) {
-    return { ok: false, reason: "wasm.url debe ser http(s)" };
+  if (typeof wasm.url !== "string" || !isPlainUrlOrPath(wasm.url)) {
+    return { ok: false, reason: "wasm.url debe ser http(s) o ruta relativa al catalogo" };
   }
   if (typeof wasm.sha256 !== "string" || !SHA256_RE.test(wasm.sha256)) {
     return { ok: false, reason: "wasm.sha256 debe ser hex de 64 chars" };

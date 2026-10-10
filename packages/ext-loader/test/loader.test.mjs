@@ -99,6 +99,23 @@ test("installArtifacts verifica cada archivo del bundle", async () => {
   assert.equal(result.value.files.find((f) => f.name === "manga-oni.js").entry, true);
 });
 
+test("installArtifacts resuelve wasm.url relativa contra el catalogo", async () => {
+  const bytes = new Uint8Array([1, 2, 3]);
+  const hex = await sha256Hex(bytes);
+  const e = entry({ wasm: { url: "manga-oni/manga-oni-0.1.0.wasm", sha256: hex, size: 3 } });
+  const seen = [];
+  const fetchImpl = async (url) => {
+    seen.push(url);
+    return { ok: true, status: 200, arrayBuffer: async () => bytes.buffer.slice(0) };
+  };
+  const result = await installArtifacts(e, {
+    catalogUrl: "https://repo.example/store/index.json",
+    fetchImpl,
+  });
+  assert.equal(result.ok, true);
+  assert.deepEqual(seen, ["https://repo.example/store/manga-oni/manga-oni-0.1.0.wasm"]);
+});
+
 test("computeArtifactPaths genera rutas servibles del bundle", () => {
   const e = entry({
     bundle: {

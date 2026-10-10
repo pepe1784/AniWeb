@@ -76,6 +76,20 @@ test("fetchCatalog valida estructura y devuelve el catalogo", async () => {
   assert.equal(result.value.catalog.extensions.length, 1);
 });
 
+test("validateEntry acepta wasm.url relativa (build sin EXT_REPO)", () => {
+  const check = validateEntry(
+    entry({ wasm: { url: "manga-oni/manga-oni-0.1.0.wasm", sha256: SHA, size: 1024 } }),
+  );
+  assert.equal(check.ok, true);
+});
+
+test("validateEntry rechaza esquemas peligrosos en wasm.url", () => {
+  for (const url of ["javascript:alert(1)", "data:text/html;base64,AA", "file:///etc/passwd"]) {
+    const check = validateEntry(entry({ wasm: { url, sha256: SHA, size: 1024 } }));
+    assert.equal(check.ok, false, `deberia rechazar ${url}`);
+  }
+});
+
 test("fetchCatalog reporta errores claros", async () => {
   const cases = [
     [{ ok: false, status: 404 }, "http 404"],
