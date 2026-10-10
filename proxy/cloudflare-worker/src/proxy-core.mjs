@@ -218,9 +218,6 @@ export async function handle(request, env) {
 
   const allowlist = effectiveAllowlist(config, request);
   if (!allowlist.length) return jsonError(403, "sin lista de dominios permitidos", cors);
-  if (!config.allowPrivate && isPrivateHost(targetUrl.hostname)) {
-    return jsonError(403, "host privado no permitido", cors);
-  }
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort("timeout"), config.timeoutMs);
@@ -234,8 +231,12 @@ export async function handle(request, env) {
     }
 
     for (;;) {
+      // Se revalida en cada salto (incluida la URL inicial y cada redireccion).
       if (!hostAllowed(current.hostname, allowlist)) {
         return jsonError(403, "host no permitido", cors);
+      }
+      if (!config.allowPrivate && isPrivateHost(current.hostname)) {
+        return jsonError(403, "host privado no permitido", cors);
       }
       const headers = new Headers();
       for (const name of FORWARD_REQUEST_HEADERS) {

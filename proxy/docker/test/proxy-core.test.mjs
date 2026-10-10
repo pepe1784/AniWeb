@@ -15,6 +15,12 @@ const BASE_ENV = { PROXY_ALLOW_PRIVATE: "1", PROXY_ALLOWED_DOMAINS: "" };
 function startUpstream() {
   const server = http.createServer((req, res) => {
     const body = "hello world";
+    if (String(req.url).startsWith("/redirect")) {
+      const to = new URL(req.url, "http://127.0.0.1").searchParams.get("to");
+      res.writeHead(302, { location: to });
+      res.end();
+      return;
+    }
     if (!String(req.url).startsWith("/data")) {
       res.writeHead(404, { "content-type": "text/plain" });
       res.end("nope");
@@ -104,6 +110,33 @@ test("reenvia Range y devuelve 206", async () => {
     assert.equal(res.status, 206);
     assert.match(res.headers.get("content-range"), /^bytes 0-4\//);
     assert.equal(await res.text(), "hello");
+  } finally {
+    upstream.close();
+  }
+});
+
+test("sigue una redireccion a un host permitido", async () => {
+  const upstream = await startUpstream();
+  try {
+    const port = upstream.address().port;
+    const target = `http://127.0.0.1:${port}/redirect?to=${encodeURIComponent(`http://127.0.0.1:${port}/data`)}`;
+    const request = new Request(proxyUrl(target), { headers: { "X-AniWeb-Allow": "127.0.0.1" } });
+    const res = await handle(request, BASE_ENV);
+    assert.equal(res.status, 200);
+    assert.equal(await res.text(), "hello world");
+  } finally {
+    upstream.close();
+  }
+});
+
+test("rechaza una redireccion a un host no permitido", async () => {
+  const upstream = await startUpstream();
+  try {
+    const port = upstream.address().port;
+    const target = `http://127.0.0.1:${port}/redirect?to=${encodeURIComponent("https://evil.example/x")}`;
+    const request = new Request(proxyUrl(target), { headers: { "X-AniWeb-Allow": "127.0.0.1" } });
+    const res = await handle(request, BASE_ENV);
+    assert.equal(res.status, 403);
   } finally {
     upstream.close();
   }
