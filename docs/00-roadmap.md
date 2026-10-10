@@ -71,7 +71,7 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** ambas extensiones compilan a `.wasm` y pasan el loader (Fase 8) en un test; los catálogos `index.min.json`/`index.pb` se generan y validan.
 
-## Fase 7 — Proxy CORS mínimo (entregable 7)
+## Fase 7 — Proxy CORS mínimo (entregable 7) (cerrada)
 
 - [x] `proxy/cloudflare-worker/` (plantilla con botón de despliegue)
 - [x] `proxy/docker/` (contenedor opcional del compose)
