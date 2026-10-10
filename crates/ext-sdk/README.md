@@ -36,6 +36,9 @@ let paginas = sdk::parsing::parse(&h, html_bruto).select(".page img");
   relaciones) usa `http::get_json` y este tipo. El parseo corre en el sandbox WASM.
 - `parsing` — `HtmlDoc`/`Element` con RAII: `select`, `attribute`, `text`,
   `children`, `parent`, `html`.
+- `text` — puros (con tests): `between`, `bracket_after`, `objects`, `value_after`,
+  `slug`. Para extraer datos de scripts inline (`episodes:[...]`, `embeds:{...}`)
+  o variables base64 sin motor de regex (AnimeAV1, MangaOni).
 - `crypto` — `base64_encode/decode`, `sha256_hex/bytes`, `md5_hex/bytes`, `hex`.
 - `log` — `trace/debug/info/warn/error`, `log`.
 - `storage` — clave/valor aislado por extension: `get`, `set`, `keys`, `get_bool`, `set_bool`.
