@@ -89,6 +89,8 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** cargar la extensión de ejemplo de la Fase 6 en un Worker y ejecutar `buscar()` devolviendo resultados correctos.
 
+> **Compromiso detectado (Fase 8, en curso):** el WIT declara las host functions como **síncronas**; `http.request` no puede implementarse en un navegador (`fetch` es asíncrono y el ABI síncrono no admite hosts que devuelvan promesas). Antes de implementar `http` se decide si `http.request` y las de `extension-api` pasan a `async` (afecta a `packages/ext-api`, `crates/ext-sdk` y las extensiones de ejemplo). Detalle en `packages/ext-host/README.md`.
+
 ## Fase 9 — MVP lector → reproductor → WebGPU (entregable 9)
 
 - [ ] Lector: paginado, webtoon, RTL, precarga, zoom; páginas vía `<img>`; descarga a OPFS

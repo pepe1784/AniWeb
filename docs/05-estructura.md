@@ -51,8 +51,8 @@ AniWeb/
 | --- | --- | --- | --- |
 | `app/` | PWA: UI, lector, reproductor, Service Worker, integración de extensiones | 9 | esqueleto por crear |
 | `packages/ext-api/` | WIT (fuente de verdad) + bindings TS | 4 | hecho |
-| `packages/ext-host/` | host functions en el navegador | 8 | por crear |
-| `packages/ext-loader/` | Worker aislado, SHA-256, permisos, límites | 8 | por crear |
+| `packages/ext-host/` | host functions en el navegador | 8 | en curso (manifest, json, crypto, storage listos) |
+| `packages/ext-loader/` | Worker aislado, SHA-256, permisos, límites | 8 | en curso (verificación SHA-256 lista) |
 | `crates/ext-sdk/` | bindings Rust + helpers | 6 | hecho |
 | `extensions/` | registro de repos externos de extensiones | 6 | hecho |
 | `extension-template/` | plantilla de repo de extensiones | 5 | hecho |
