@@ -115,7 +115,7 @@ Ambas viven fuera del monorepo, en `C:\Users\<usuario>\Desktop\ext-repos\`, con 
 - Episodios: `episodes:[{id,number}, ...]` en un `<script>` inline; URL `<anime-url>/<number>`.
 - Fuentes de vídeo: `embeds:{DUB:[...],SUB:[...]}` con entradas `{server:"HLS",url:"https://player.zilla-networks.com/play/<hash>"}`.
 - **Alcance de reproducción:** solo el servidor **HLS** es reproducible sin extractores de terceros (`player.zilla-networks.com/play/<hash>` -> `/m3u8/<hash>`). Los demás (UPNShare, Voe, Byse, YourUpload, MP4Upload, VidHide, StreamTape) requieren extractores de JS/descifrado y se omiten de forma explícita.
-- Nota histórica: `api.consumet.org` (Consumet) está caído globalmente (HTTP 451); se descartó como fuente de anime.
+- Nota histórica: `api.consumet.org` (Consumet) responde **HTTP 451 (Unavailable For Legal Reasons)**: es un bloqueo por motivos legales/derechos de autor, no una caída técnica; se descartó como fuente de anime.
 - WASM: 151732 bytes, sha256 `6d3602f6bdb53781b347d191341628298129eeb3b46be75d51ec5bbe53fe489f`; source id `5029024687956981182`.
 
 ## Validación local (Fase 6)

@@ -31,7 +31,7 @@ Lo que depende de extractores Android (JS ofuscado, AES con clave fija, WebView)
 - **MangaOni** (`manga-oni.com`), manga en español.
 - **AnimeAV1** (`animeav1.com`), anime en español, portado de `yuzono/anime-extensions`.
 
-Consumet (`api.consumet.org`) se descarta: está caído globalmente (HTTP 451).
+Consumet (`api.consumet.org`) se descarta: responde HTTP 451 (Unavailable For Legal Reasons), un bloqueo por motivos legales/derechos de autor (no una caída técnica).
 
 ## Alternativas consideradas
 
