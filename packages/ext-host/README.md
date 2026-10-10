@@ -23,7 +23,13 @@ Consume los bindings TS de `packages/ext-api/src/generated/`.
 | `src/http.mjs` | `http` (allowlist + proxy + Range), transporte inyectable | listo + tests + validado en navegador |
 | `src/parsing-host.mjs` | `parsing` (HTML + subconjunto CSS: tag/id/clase/attr, descendiente e hijo) | listo + tests |
 | `src/logging-host.mjs` | `logging` (`log`) | listo + tests |
-| puente Worker (jco) | instanciar el componente con estas imports | pendiente |
+| `src/wit-imports/*.mjs` | puente de imports WIT para el componente (jco) | listo + E2E en navegador |
+
+El **puente de imports** (`src/wit-imports/`) expone una funcion por nombre WIT
+(`request`, `parse`, `get`...) que delega en el host correspondiente. El
+componente transpilado con `jco` importa `aniweb:extension/*`; la configuracion
+(`sites`, `proxyUrl`, `id`, limites) se lee de `globalThis.__ANIWEB_HOST_CONFIG__`
+antes de instanciar. El E2E real vive en `packages/ext-loader/browser-e2e/`.
 
 Pruebas (Node, sin navegador):
 
