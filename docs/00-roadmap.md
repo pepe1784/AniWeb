@@ -30,15 +30,15 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** ADRs aprobadas y diagrama revisado.
 
-## Fase 3 — Instalación y despliegue (entregable 3)
+## Fase 3 — Instalación y despliegue (entregable 3) (configurado)
 
-- [ ] `docs/03-despliegue.md` con las 3 rutas: GitHub Pages, Docker, hosting estático (Cloudflare Pages/Netlify)
-- [ ] `.github/workflows/deploy.yml` completo (build + Pages, base path + SW scope)
-- [ ] `infra/Dockerfile` multi-etapa (multi-stage + nginx/caddy), `docker-compose.yml`, healthchecks
-- [ ] Guía HTTPS (Caddy auto-cert / Cloudflare Tunnel) y variables de entorno
-- [ ] Guía de instalación PWA en Android, iOS y escritorio (manifest, iconos, offline, estrategia de caché del SW)
+- [x] `docs/03-despliegue.md` con las 3 rutas: GitHub Pages, Docker, hosting estático (Cloudflare Pages/Netlify)
+- [x] `.github/workflows/deploy.yml` completo (build + Pages, base path + SW scope)
+- [x] `infra/Dockerfile` multi-etapa (Build + nginx), `docker-compose.yml` (+ proxy opcional), Caddyfile, `.env.example`, healthchecks
+- [x] Guía HTTPS (Caddy auto-cert / Cloudflare Tunnel) y variables de entorno
+- [x] Guía de instalación PWA en Android, iOS y escritorio (manifest, iconos, offline, estrategia de caché del SW)
 
-**Criterio de aceptación:** la app (cuando exista el esqueleto) se puede desplegar por al menos una ruta y abrirse como PWA instalada.
+**Criterio de aceptación:** la app (cuando exista el esqueleto, Fase 5/9) se puede desplegar por al menos una ruta y abrirse como PWA instalada. La validación end-to-end queda pendiente del esqueleto.
 
 ## Fase 4 — Interfaz WIT de extensiones (entregable 4)
 
