@@ -29,6 +29,9 @@ wasm-pack/
 .DS_Store
 Thumbs.db
 
+# Local tooling (no forma parte del repo)
+.opencode/
+
 # Logs
 logs/
 *.log
