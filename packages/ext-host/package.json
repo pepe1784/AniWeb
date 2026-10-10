@@ -1,0 +1,14 @@
+{
+  "name": "@aniweb/ext-host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Host functions (http, json, crypto, storage, logging, parsing) del runtime de extensiones de AniWeb",
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
