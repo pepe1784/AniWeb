@@ -1,0 +1,247 @@
+package aniweb:extension;
+
+// -------------------------------------------------------------------
+// Modelos de datos compartidos
+// -------------------------------------------------------------------
+interface types {
+  variant error {
+    message(string),
+    not-supported,
+    no-results,
+    timeout,
+  }
+
+  record header {
+    name: string,
+    value: string,
+  }
+
+  enum nsfw-level {
+    safe,
+    suggestive,
+    nsfw,
+  }
+
+  record catalog-result {
+    id: string,
+    title: string,
+    url: string,
+    thumbnail-url: string,
+    author: option<string>,
+    status: option<string>,
+  }
+
+  record chapter {
+    id: string,
+    name: string,
+    url: string,
+    scanlator: option<string>,
+    uploaded-at: option<string>,
+    page-count: option<u32>,
+  }
+
+  record manga-page {
+    url: string,
+    index: u32,
+    headers: list<header>,
+  }
+
+  record manga-detail {
+    id: string,
+    title: string,
+    url: string,
+    thumbnail-url: string,
+    author: option<string>,
+    artist: option<string>,
+    status: option<string>,
+    description: option<string>,
+    genres: list<string>,
+    nsfw: nsfw-level,
+    chapters: list<chapter>,
+  }
+
+  record episode {
+    id: string,
+    name: string,
+    url: string,
+    uploaded-at: option<string>,
+  }
+
+  record quality {
+    url: string,
+    quality: option<string>,
+    format: option<string>,
+    headers: list<header>,
+  }
+
+  record subtitle {
+    url: string,
+    lang: option<string>,
+    format: option<string>,
+  }
+
+  record video-source {
+    server-name: string,
+    qualities: list<quality>,
+    subtitles: list<subtitle>,
+  }
+}
+
+// -------------------------------------------------------------------
+// Host functions: red (validada contra los dominios del manifest y el proxy)
+// -------------------------------------------------------------------
+interface http {
+  use types.{header};
+
+  record range {
+    start: u64,
+    end: option<u64>,
+  }
+
+  record http-response {
+    status: u16,
+    headers: list<header>,
+    body: list<u8>,
+  }
+
+  variant http-error {
+    blocked,
+    timeout,
+    too-large,
+    invalid-url,
+    network(string),
+  }
+
+  request: func(
+    url: string,
+    method: option<string>,
+    headers: list<header>,
+    body: option<list<u8>>,
+    range: option<range>,
+  ) -> result<http-response, http-error>;
+}
+
+// -------------------------------------------------------------------
+// Host functions: parser HTML con selectores CSS (el host conserva el arbol)
+// -------------------------------------------------------------------
+interface parsing {
+  parse: func(html: string) -> u32;
+  select: func(doc: u32, selector: string) -> list<u32>;
+  element-attr: func(element: u32, attribute: string) -> option<string>;
+  element-text: func(element: u32) -> option<string>;
+  element-html: func(element: u32) -> option<string>;
+  element-parent: func(element: u32) -> option<u32>;
+  element-children: func(element: u32) -> list<u32>;
+  drop: func(doc: u32);
+}
+
+// -------------------------------------------------------------------
+// Host functions: JSON (el host conserva el arbol; la extension accede por path)
+// -------------------------------------------------------------------
+interface json {
+  variant json-value {
+    null,
+    boolean(bool),
+    number(f64),
+    str(string),
+  }
+
+  variant json-error {
+    parse(string),
+    invalid-path,
+  }
+
+  // Parsea un texto JSON y devuelve un handle de documento (el host conserva el arbol).
+  parse: func(text: string) -> result<u32, json-error>;
+  // Lee un valor hoja por path desde el documento.
+  // Paths: "data.results[0].title" (objetos y arrays). Apuntar a un objeto o array da invalid-path.
+  get: func(doc: u32, path: string) -> result<json-value, json-error>;
+  // Lee todos los valores hoja de un path con comodin: "data.results[*].id".
+  get-all: func(doc: u32, path: string) -> result<list<json-value>, json-error>;
+  // Longitud de una lista: "data.results".
+  length: func(doc: u32, path: string) -> result<u32, json-error>;
+  drop: func(doc: u32);
+}
+
+// -------------------------------------------------------------------
+// Host functions: utilidades criptograficas
+// -------------------------------------------------------------------
+interface crypto {
+  base64-encode: func(bytes: list<u8>) -> string;
+  base64-decode: func(text: string) -> result<list<u8>, string>;
+  sha256: func(bytes: list<u8>) -> list<u8>;
+  md5: func(bytes: list<u8>) -> list<u8>;
+}
+
+// -------------------------------------------------------------------
+// Host functions: registro de eventos (visible en consola de la extension)
+// -------------------------------------------------------------------
+interface logging {
+  enum log-level {
+    trace,
+    debug,
+    info,
+    warn,
+    error,
+  }
+
+  log: func(level: log-level, message: string);
+}
+
+// -------------------------------------------------------------------
+// Host functions: almacenamiento clave/valor aislado por extension
+// -------------------------------------------------------------------
+interface storage {
+  get: func(key: string) -> option<string>;
+  set: func(key: string, value: string);
+  keys: func() -> list<string>;
+}
+
+// -------------------------------------------------------------------
+// API que la extension debe implementar (exportada al host)
+// -------------------------------------------------------------------
+interface extension-api {
+  use types.{
+    error,
+    catalog-result,
+    manga-detail,
+    chapter,
+    manga-page,
+    episode,
+    video-source,
+  };
+
+  // Arranque: recibe la configuracion del usuario como JSON (string).
+  init: func(settings: string) -> result<_, error>;
+  // Verificacion: debe coincidir con el "id" del manifest instalado.
+  id: func() -> string;
+
+  // --- Manga ---
+  get-manga-popular: func(page: u32) -> result<list<catalog-result>, error>;
+  get-manga-recent: func(page: u32) -> result<list<catalog-result>, error>;
+  search-manga: func(query: string, page: u32) -> result<list<catalog-result>, error>;
+  get-manga-detail: func(url: string) -> result<manga-detail, error>;
+  get-chapters: func(manga-url: string) -> result<list<chapter>, error>;
+  get-manga-pages: func(chapter-url: string) -> result<list<manga-page>, error>;
+
+  // --- Anime ---
+  get-anime-popular: func(page: u32) -> result<list<catalog-result>, error>;
+  get-anime-recent: func(page: u32) -> result<list<catalog-result>, error>;
+  search-anime: func(query: string, page: u32) -> result<list<catalog-result>, error>;
+  get-episodes: func(anime-url: string) -> result<list<episode>, error>;
+  get-video-sources: func(episode-url: string) -> result<list<video-source>, error>;
+}
+
+// -------------------------------------------------------------------
+// World de la extension: host functions + API exportada
+// -------------------------------------------------------------------
+world extension {
+  import http;
+  import parsing;
+  import json;
+  import crypto;
+  import logging;
+  import storage;
+
+  export extension-api;
+}
