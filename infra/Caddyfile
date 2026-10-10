@@ -1,0 +1,5 @@
+# Caddy como front HTTPS que reversa hacia nginx (servicio web del compose).
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:80
+}

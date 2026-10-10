@@ -1,0 +1,45 @@
+# AniWeb - Docker Compose
+#
+# Uso:
+#   docker compose -f infra/docker-compose.yml up -d --build                        # web (nginx)
+#   docker compose -f infra/docker-compose.yml --profile cors-proxy up -d --build   # + proxy CORS opcional
+#   docker compose -f infra/docker-compose.yml -f infra/docker-compose.caddy.yml up -d --build  # + HTTPS Caddy
+#
+# Copia infra/.env.example a infra/.env para personalizar.
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+      args:
+        VITE_BASE_PATH: ${VITE_BASE_PATH:-/}
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/healthz || exit 1"]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
+
+  # Proxy CORS opcional (entregable 7 del roadmap).
+  # Solo se construye con --profile cors-proxy. La app apunta a el via "URL del proxy".
+  cors-proxy:
+    build:
+      context: ../proxy/docker
+    profiles: ["cors-proxy"]
+    ports:
+      - "${PROXY_PORT:-8787}:8787"
+    restart: unless-stopped
+    environment:
+      # Dominios permitidos por defecto, separados por comas.
+      # La app puede enviar ademas su lista por peticion (validada contra esta si no esta vacia).
+      PROXY_ALLOWED_DOMAINS: ${PROXY_ALLOWED_DOMAINS:-}
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/healthz || exit 1"]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
