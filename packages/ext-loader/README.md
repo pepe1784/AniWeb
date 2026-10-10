@@ -9,7 +9,20 @@ Carga las extensiones del catálogo (WASM componente) en Web Workers aislados:
   memoria/tiempo por llamada.
 - Política de actualizaciones (version/updated-at del catálogo).
 
-Se implementa en la Fase 8, junto a `packages/ext-host`. El formato del
-catálogo está descrito en `docs/04-wit-extensiones.md`.
+## Estado (Fase 8, en curso)
+
+| Módulo | Responsabilidad | Estado |
+| --- | --- | --- |
+| `src/verify.mjs` | SHA-256 (WebCrypto) + tamaño del `.wasm` contra el catálogo | listo + tests |
+| instanciación en Worker (jco) | pendiente (depende de la decisión async del WIT) | pendiente |
+| permisos, límites de memoria/tiempo y actualizaciones | pendiente |
+
+Pruebas (Node, sin navegador):
+
+```sh
+cd packages/ext-loader && node --test
+```
+
+El formato del catálogo está descrito en `docs/04-wit-extensiones.md`.
 
 Ver: `docs/00-roadmap.md` (Fase 8), `docs/02-arquitectura.md`.

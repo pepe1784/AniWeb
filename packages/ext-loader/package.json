@@ -1,0 +1,14 @@
+{
+  "name": "@aniweb/ext-loader",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Loader de extensiones de AniWeb: verificacion SHA-256, permisos, limites y ciclo de vida",
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
