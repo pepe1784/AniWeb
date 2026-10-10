@@ -89,7 +89,7 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 **Criterio de aceptación:** cargar la extensión de ejemplo de la Fase 6 en un Worker y ejecutar `buscar()` devolviendo resultados correctos.
 
-> **Compromiso detectado (Fase 8, en curso):** el WIT declara las host functions como **síncronas**; `http.request` no puede implementarse en un navegador (`fetch` es asíncrono y el ABI síncrono no admite hosts que devuelvan promesas). Antes de implementar `http` se decide si `http.request` y las de `extension-api` pasan a `async` (afecta a `packages/ext-api`, `crates/ext-sdk` y las extensiones de ejemplo). Detalle en `packages/ext-host/README.md`.
+> **Compromiso y resolución (Fase 8, en curso):** el WIT declara las host functions como **síncronas**; `fetch` es asíncrono y el ABI síncrono no admite hosts que devuelvan promesas. Se resolvió con **XHR síncrono** en el Worker de la extensión, validado en Chromium (200 sin Range, 206 con `Range: bytes=0-9`, `blocked` para dominios no permitidos). La red queda detrás de una **abstracción de transporte** para poder migrar a async si el WIT cambiara. Detalle en `packages/ext-host/README.md` y `packages/ext-host/browser-check/`.
 
 ## Fase 9 — MVP lector → reproductor → WebGPU (entregable 9)
 

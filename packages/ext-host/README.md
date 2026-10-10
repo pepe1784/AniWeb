@@ -20,7 +20,7 @@ Consume los bindings TS de `packages/ext-api/src/generated/`.
 | `src/json-host.mjs` | `json` (`parse`/`get`/`get-all`/`length`/`drop`) | listo + tests |
 | `src/crypto-host.mjs` | `crypto` (`base64-encode`/`base64-decode`/`sha256`/`md5`) | listo + tests |
 | `src/storage-host.mjs` | `storage` (`get`/`set`/`keys`), backend inyectable | listo + tests |
-| `http` | `request` (proxy + allowlist + Range) | pendiente de decisión async (ver abajo) |
+| `src/http.mjs` | `http` (allowlist + proxy + Range), transporte inyectable | listo + tests + validado en navegador |
 | `parsing` | parser HTML con selectores CSS | pendiente |
 | `logging` | bus de eventos | pendiente |
 | puente Worker (jco) | instanciar el componente con estas imports | pendiente |
@@ -35,15 +35,20 @@ cd packages/ext-host && node --test
 puro (no se puede usar `crypto.subtle`, que es asíncrono). MD5 solo por
 compatibilidad con sitios que firman con él; nunca para integridad.
 
-## Restricción detectada
+## Transporte de red (XHR síncrono)
 
-La interface WIT declara las host functions como **síncronas**. `http.request`
-no puede implementarse así en un navegador: `fetch` es asíncrono y el ABI
-síncrono del Component Model (sin `async` en el WIT) no admite un host que
-devuelva una promesa. Antes de implementar `http` hay que decidir si
-`http.request` —y las funciones de `extension-api` que lo llaman— pasan a ser
-`async` en el WIT (afecta a `packages/ext-api`, `crates/ext-sdk` y las
-extensiones de ejemplo).
+La interface WIT es **síncrona**: un import sin `async` usa el ABI síncrono del
+Component Model y no admite un host que devuelva una promesa. `fetch` no sirve,
+así que `http` hace la red con **XMLHttpRequest síncrono** dentro del Worker de
+la extensión (permitido en Workers) contra el proxy CORS de la Fase 7.
+
+La red está detrás de una **abstracción de transporte**
+(`transport(req) -> { status, headers, body }`): el resto del host no sabe si
+por debajo hay XHR síncrono o, en el futuro, `fetch` asíncrono. Si algún día el
+WIT pasa a `async`, se sustituye **solo el transporte**.
+
+Validado en Chromium (ver `browser-check/`): 200 sin Range y 206 con
+`Range: bytes=0-9` a través del proxy, y `blocked` para dominios no permitidos.
 
 Ver: `packages/ext-api/README.md`, `docs/04-wit-extensiones.md`,
 `docs/00-roadmap.md` (Fase 8).
