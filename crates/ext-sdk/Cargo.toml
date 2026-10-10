@@ -1,0 +1,19 @@
+[package]
+name = "aniweb-ext-sdk"
+version = "0.1.0"
+edition = "2021"
+description = "SDK Rust de alto nivel para extensiones AniWeb (componentes WASM). Sin dependencias."
+license = "AGPL-3.0-only"
+publish = false
+
+[lib]
+# Libreria pura: los adapters a las host functions los genera el macro host! en la extension.
+crate-type = ["lib"]
+
+[dependencies]
+# Sin dependencias: helpers puros sobre los tipos mirror y el Host.
+
+[package.metadata.component]
+# Este crate NO generaa bindings propios; las extensiones usan los que genera cargo-component.
+
+[workspace]
