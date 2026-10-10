@@ -27,6 +27,7 @@ pub mod json_value;
 pub mod log;
 pub mod parsing;
 pub mod storage;
+pub mod text;
 pub mod types;
 pub mod url;
 
