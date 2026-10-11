@@ -1,0 +1,41 @@
+---
+# AniWeb - nucleo de servidor (Suwayomi-Server, MPL-2.0, upstream).
+#
+# Levantar:   docker compose -f server/docker-compose.yml up -d
+# WebUI+API:  http://localhost:4567
+# Parar:      docker compose -f server/docker-compose.yml down
+# Datos:      server/data/ (volumen; contiene server.conf, base de datos, extensiones, descargas)
+#
+# El servidor ejecuta las extensiones nativas de Mihon/Tachiyomi (archivos .apk).
+# Se instalan desde la pestana Extensiones de su WebUI (p. ej. el repo Keiyoushi).
+# AniWeb (la PWA) NO ejecuta esas extensiones: solo consume su API REST/GraphQL.
+
+services:
+  suwayomi:
+    image: ghcr.io/suwayomi/suwayomi-server:${SUWAYOMI_TAG:-stable}
+    container_name: aniweb-suwayomi
+    environment:
+      - TZ=${TZ:-Etc/UTC}
+      # Auth desactivada por defecto (uso local). Para exponer en red, activar:
+      # - AUTH_MODE=basic_auth
+      # - AUTH_USERNAME=${SUWAYOMI_USER:-admin}
+      # - AUTH_PASSWORD=${SUWAYOMI_PASSWORD:-changeme}
+      # Si se usa el contenedor flaresolverr de abajo, descomentar:
+      # - FLARESOLVERR_ENABLED=true
+      # - FLARESOLVERR_URL=http://flaresolverr:8191
+    volumes:
+      - ./data:/home/suwayomi/.local/share/Tachidesk
+    ports:
+      - "${SUWAYOMI_PORT:-4567}:4567"
+    restart: unless-stopped
+
+  # FlareSolverr (opcional): resuelve retos de Cloudflare para las fuentes que
+  # lo exigen. Descomentar junto con las variables FLARESOLVERR_* de arriba.
+  # flaresolverr:
+  #   image: ghcr.io/flaresolverr/flaresolverr:latest
+  #   container_name: aniweb-flaresolverr
+  #   environment:
+  #     - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-info}
+  #   ports:
+  #     - "8191:8191"
+  #   restart: unless-stopped
