@@ -15,10 +15,17 @@ Hay confusión entre dos niveles distintos:
 
 Lo verificado:
 
-- **Mihon/Aniyomi (y Suwayomi)**: el store usa **`index.min.json`** (JSON
-  minificado) y **`index.pb`** (protobuf, mismo contenido para herramientas
-  Mihon). Los artefactos son `.apk`/`.jar` (dex). AniWeb ya genera ambos índices en
+- **Mihon/Aniyomi (y Suwayomi)**: el store usa **`repo.json`** (store v2, JSON, con
+  `extensionListUrl`), **`index.min.json`** (JSON v1 legacy) y **`index.pb`**
+  (protobuf, mismo contenido para herramientas Mihon). Los artefactos son
+  `.apk`/`.jar` (dex). AniWeb ya genera `.min.json`/`.pb` en
   `extension-template/scripts/build-index.mjs`, pero con orientación Mihon.
+- **El servidor Suwayomi ya parsea los tres**: verificado en
+  `server/.../manga/impl/extension/ExtensionStoreService.kt` (`fetch`/`getExtensions`),
+  que decide por el primer byte: `[` -> `index.min.json` legacy, `{` -> `repo.json`
+  / `NetworkExtensionStore` (JSON) y cualquier otro -> protobuf `NetworkExtensionStore`
+  (`.pb`), con soporte de `extensionListUrl` y gzip. Es decir, **el parser no es
+  trabajo pendiente**.
 - **Mangayomi**: un mismo repo expone **hasta tres catálogos por URL**:
   `index.json` (manga), `anime_index.json` (anime) y `novel_index.json` (novela);
   los artefactos son `.js` o `.dart`. La app añade el repo con
@@ -46,8 +53,11 @@ que los repos son `.json`/`.min.json`/`.pb` (no `.apk`/`.jar`).
 4. **Repos Mangayomi**: se acepta una entrada de repo con **hasta tres URLs**
    (`manga_url`, `anime_url`, `novel_url`) y se importan como catálogos
    independientes.
-5. **Repos Mihon/Aniyomi**: `index.min.json` + `index.pb`; su consumo principal es
-   el **servidor** (Suwayomi ya lo hace). El cliente solo los muestra.
+5. **Repos Mihon/Aniyomi**: los consume el **servidor**, que **ya** soporta hoy el
+   JSON de store (`repo.json`), el JSON v1 (`index.min.json`) y el protobuf
+   (`.pb`); verificado en `ExtensionStoreService.kt`. El cliente solo los muestra.
+   **El trabajo pendiente no es el parser, sino que la capa de anime consuma
+   extensiones de anime de esos mismos stores** (ADR-010).
 6. **Repos AniWeb**: se mantiene el `index.json` v1 de `packages/ext-loader` para
    fuentes WASM/JS del "aniweb runtime", documentado como formato propio y
    versionado.
@@ -90,15 +100,18 @@ que los repos son `.json`/`.min.json`/`.pb` (no `.apk`/`.jar`).
 
 ### Negativas / compromisos
 
-- Hay que **parsear y mantener** `index.min.json` y `index.pb` (protobuf) además
-  del JSON propio; el `.pb` acopla a un esquema ajeno (Mihon `NetworkExtensionStore`).
-- Coexisten **tres formatos** de catálogo: más pruebas y casos límite.
+- El parseo de `repo.json` / `index.min.json` / `.pb` **ya existe en el servidor**
+  (no es coste nuevo) y el cliente no añade un parser propio; el acoplamiento al
+  esquema ajeno (Mihon `NetworkExtensionStore`) es del servidor.
+- Coexisten **tres formatos** de catálogo en el ecosistema: hay que cubrirlos en
+  pruebas de integración, aunque el lector no se escriba de cero.
 - La "novela" queda declarada pero no implementada: deuda explícita.
 
 ## Referencias
 
 - `packages/ext-loader/src/catalog.mjs` (AniWeb `index.json` v1)
 - `extension-template/scripts/build-index.mjs` (generación de `.min.json`/`.pb`)
+- Suwayomi `ExtensionStoreService.kt` (`repo.json` / `index.min.json` / protobuf `.pb`)
 - Mangayomi `kodjodevf/mangayomi-extensions` (3 catálogos), `wotaku.wiki/ext/mangayomi`
 - `docs/adr/ADR-007-extensiones-externas.md`, `docs/adr/ADR-010-anime-en-nucleo-servidor.md`,
   `docs/adr/ADR-011-aniweb-runtime-servidor.md`

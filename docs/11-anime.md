@@ -116,7 +116,10 @@ Ver ADR-012. En corto:
 
 - **Mangayomi**: un repo expone hasta **3 catálogos** (`index.json` manga,
   `anime_index.json` anime, `novel_index.json` novela).
-- **Mihon/Aniyomi**: `index.min.json` + `index.pb`; lo consume el servidor.
+- **Mihon/Aniyomi**: `repo.json` (store v2) / `index.min.json` (v1) / `index.pb`;
+  **el servidor Suwayomi ya los parsea** (`ExtensionStoreService.kt`), así que
+  aquí no se escribe un parser: el trabajo es que **la capa de anime consuma
+  extensiones de anime de esos mismos stores**.
 - **AniWeb**: `index.json` v1 (`packages/ext-loader/src/catalog.mjs`).
 - **Tipos de medio**: manga, anime y, **a futuro**, novela.
 - Todos se normalizan a `CatalogEntry { id, name, mediaType, lang, version,
@@ -140,8 +143,11 @@ Media Session, PiP y recordar posición. `mpv`/transcodificado en JVM: no-objeti
   - [ ] Tipos y operaciones GraphQL de anime; REST solo iconos/thumbnails/proxy.
   - [ ] Comprobación de que el **manga sigue igual** (no regresión).
 - **10b. Repositorios y catálogos.**
-  - [ ] Importador/normalizador de `.json`, `.min.json`, `.pb` (ADR-012).
-  - [ ] Soporte de repos Mangayomi con 3 catálogos; mark de novela como futuro.
+  - [ ] Capa de anime leyendo **los stores existentes** de Suwayomi (`repo.json`,
+    `index.min.json`, `.pb` ya soportados; ADR-012): las extensiones de anime
+    aparecen como tales sin escribir un parser nuevo.
+  - [ ] Soporte de repos Mangayomi con 3 catálogos (`index.json`,
+    `anime_index.json`, `novel_index.json`); mark de novela como futuro.
   - [ ] Sincronización de repos server-side y listado por API.
 - **10c. `aniweb runtime` server-side.**
   - [ ] Servicio local con la forma de API unificada, ejecutando JS y WASM.
@@ -161,8 +167,10 @@ Media Session, PiP y recordar posición. `mpv`/transcodificado en JVM: no-objeti
 1. **10a**: con el servidor levantado, instalar una extensión de anime Aniyomi
    desde un repo, buscar un anime, listar episodios y obtener hosters y URLs de
    vídeo por la API; el manga sigue funcionando sin cambios.
-2. **10b**: añadir un repo Mihon (`index.min.json`/`.pb`) y uno Mangayomi
-   (`index.json` + `anime_index.json`) y ver sus extensiones normalizadas.
+2. **10b**: añadir un repo Mihon (`index.min.json`/`.pb` o `repo.json`) y ver sus
+   **extensiones de anime** listadas e instalables; añadir un repo Mangayomi
+   (`index.json` + `anime_index.json`) y ver sus catálogos normalizados en el
+   `aniweb runtime`.
 3. **10c**: registrar una fuente JS (Mangayomi) y una WASM en el `aniweb runtime`,
    y consultarlas con el mismo contrato que las nativas; una fuente con sesión o
    tras Cloudflare funciona gracias al estado del servidor.
