@@ -2,6 +2,13 @@
 
 Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguiente hasta que la persona confirma la anterior. Cada fase cierra con sus entregables commiteados y documentados.
 
+> **Replanificación (2026-10-10).** Las Fases 0-8 (runtime WASM + proxy, modelo
+> 100% cliente) se mantienen, pero pasan a ser el **runtime fallback**. La Fase 9
+> se reorienta a un **núcleo de servidor Suwayomi (self-hosted)** con clientes
+> finos (PWA + APK webview) y extensiones multi-lenguaje (nativo APK, JS/Dart y
+> WASM). Motivación y detalles: `docs/adr/ADR-008-nucleo-servidor-suwayomi.md` y
+> `docs/10-servidor-suwayomi.md`.
+
 ## Fase 0 — Base del repositorio (hecha)
 
 - [x] Skill de proyecto en `.opencode/skills/aniweb`
@@ -91,19 +98,42 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 > **Compromiso y resolución (Fase 8):** el WIT declara las host functions como **síncronas**; `fetch` es asíncrono y el ABI síncrono no admite hosts que devuelvan promesas. Se resolvió con **XHR síncrono** en el Worker de la extensión, validado en Chromium (200 sin Range, 206 con `Range: bytes=0-9`, `blocked` para dominios no permitidos, y E2E completo de instanciación con jco). La red queda detrás de una **abstracción de transporte** para poder migrar a async si el WIT cambiara. Los límites de tiempo se imponen terminando el Worker desde el hilo principal (un síncrono no se interrumpe con timer); el heap WASM no se puede topar duro desde JS (detalle de compensaciones en `docs/08-loader.md`).
 
-## Fase 9 — MVP lector → reproductor → WebGPU (entregable 9)
+## Fase 9 — Núcleo de servidor y cliente base, manga (reformulada)
 
-- [ ] Lector: paginado, webtoon, RTL, precarga, zoom; páginas vía `<img>`; descarga a OPFS
+- [ ] `server/`: compose de Suwayomi-Server (self-hosted) + doc de arranque y de la API REST/GraphQL (auth, fuentes, biblioteca, capítulos, páginas)
+- [ ] Contrato de "fuente unificada" en el cliente (fuentes del servidor + runtimes fallback)
+- [ ] Cliente PWA conectado al servidor: ajustes de conexión, Biblioteca, Explorar fuentes, detalle, lector
+- [ ] Lector base: paginado, webtoon, RTL, precarga, zoom; páginas vía `<img>`
+- [ ] `docs/10-servidor-suwayomi.md` como plano de la fase
+
+**Criterio de aceptación:** leer un capítulo completo desde la PWA contra un servidor Suwayomi local con MangaOni instalado.
+
+> **Nota histórica:** el trabajo WASM/proxy de las Fases 0-8 no se pierde; pasa a
+> ser el *runtime fallback* de la Fase 10. El plano de UI en `docs/09-app.md` se
+> reutiliza como base del cliente.
+
+## Fase 10 — Runtimes de extensión fallback (JS/Dart + WASM) y anime
+
+- [ ] `runtimes/js/`: motor de extensiones JS estilo Mangayomi en Web Worker (shims `Client`, `Document`, cripto) + catálogo
+- [ ] Exponer una extensión JS de anime y la extensión WASM MangaOni como fuentes del cliente
+- [ ] Servicio local opcional "aniweb runtime" con la misma forma de API (para ejecución server-side)
+- [ ] Contrato de fuente (`isManga`, `getPageList` / `getVideoList`) y adaptador al loader WASM
+
+**Criterio de aceptación:** buscar y reproducir un episodio de una fuente JS y leer un capítulo de una fuente WASM, ambas integradas en la misma UI.
+
+## Fase 11 — Reproductor de anime, APK webview y WebGPU (opcional)
+
 - [ ] Reproductor: MSE + hls.js/dash.js, selección de servidor/calidad, subtítulos (WebVTT/ASS), Media Session, PiP, recordar posición
-- [ ] WebGPU opcional con fallback: reescalado Anime4K, mejora de manga, OCR/traducción (ONNX / Transformers.js)
-- [ ] Detección de soporte y desactivación automática
+- [ ] APK webview delgado apuntando al servidor del usuario; loader de extensiones nativas Aniyomi mientras sea viable
+- [ ] Emparejamiento y reconexión con el servidor remoto (HTTPS, token)
+- [ ] WebGPU opcional con fallback: reescalado Anime4K, mejora de manga, OCR/traducción (ONNX / Transformers.js) y detección automática de soporte
 
-**Criterio de aceptación:** en una PWA instalada se puede leer un capítulo de manga completo (online y offline) y ver un episodio con subtítulos.
+**Criterio de aceptación:** ver un episodio con subtítulos en la PWA, leer con mejora WebGPU (o fallback) y abrir el cliente APK contra un servidor remoto.
 
-## Fase 10 — Roadmap de riesgos (entregable 10) + pulido
+## Fase 12 — Riesgos y pulido (entregable final)
 
 - [ ] Backups: exportar/importar JSON; sync AniList/MAL (OAuth); respaldo a Gist/repo privado
-- [ ] `docs/10-riesgos.md`: matriz de riesgos conocidos (CORS, iOS, cuotas, WebGPU, descargas en segundo plano) con mitigaciones
+- [ ] `docs/12-riesgos.md`: matriz de riesgos (servidor, anime, políticas de Google, runtimes de terceros, cuotas, WebGPU, descargas en segundo plano) con mitigaciones
 - [ ] Política de actualizaciones de versiones del SW y avisos
 
 **Criterio de aceptación:** documentación completa de riesgos y versión 0.x estable desplegada.
