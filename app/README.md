@@ -1,20 +1,45 @@
-# app
+# app/ - PWA de AniWeb
 
-PWA de AniWeb (Svelte 5 + Vite, ADR-001): catálogo, detalle, lector de manga,
-reproductor de anime, gestor de extensiones, Service Worker (ADR-002) y WebGPU
-opcional (ADR-006).
+Cliente fin en **Svelte 5 + Vite** (ADR-001) que consume la **API REST de
+Suwayomi-Server** (`docs/11-suwayomi-api.md`). La PWA unifica manga (servidor) y
+anime (runtimes fallback, en desarrollo) y aporta la interfaz propia.
 
-Esta carpeta se llena en la Fase 9 (MVP lector -> reproductor -> WebGPU). El
-esqueleto desplegable arranca también ahí; las rutas de despliegue ya están
-preparadas en Fase 3 (`infra/`, `.github/workflows/deploy.yml`).
+- Vistas: Biblioteca, Explorar (fuentes), fuente (Popular/Recientes/Buscar),
+  ficha de manga, lector, Ajustes.
+- Enrutado por hash (`#/library`, `#/explore`, `#/source/{id}`,
+  `#/manga/{id}`, `#/manga/{id}/chapter/{index}`, `#/settings`).
+- Cliente de API en `src/lib/api/suwayomi.ts` (adaptador aislado).
+- PWA con `vite-plugin-pwa` en modo `injectManifest` (ADR-002); SW en `src/sw.ts`.
 
-Contenido planificado:
+## Desarrollo
 
-| Ruta | Contenido |
-| --- | --- |
-| `src/` | componentes Svelte, pantallas, stores |
-| `src/sw.ts` | Service Worker (injectManifest) |
-| `public/` | estáticos, iconos de la PWA |
-| `src/ext/` | integración con `packages/ext-loader/` y `packages/ext-host/` |
+```sh
+npm install
 
-Ver: `docs/00-roadmap.md` (Fase 9), `docs/02-arquitectura.md`, `docs/03-despliegue.md`.
+# Opcion A: sin servidor real (mock con la misma forma de API)
+node ../server/mock/mock-server.mjs      # http://localhost:4567
+npm run dev                              # http://localhost:5173
+
+# Opcion B: servidor real (Docker)
+docker compose -f ../server/docker-compose.yml up -d   # http://localhost:4567
+npm run dev
+```
+
+En **Ajustes** se configura la URL del servidor (por defecto
+`http://localhost:4567`).
+
+## Scripts
+
+- `npm run dev` - servidor de desarrollo Vite.
+- `npm run build` - build de produccion a `dist/`.
+- `npm run preview` - sirve el build.
+- `npm test` - pruebas unitarias (Vitest) del cliente de API.
+- `npm run check` - `svelte-check`.
+- `npm run typecheck` - `tsc --noEmit`.
+
+## Verificacion de la Fase 9
+
+Criterio: leer un capitulo completo desde la PWA. En este entorno no hay
+Docker/JRE para el servidor real, asi que se verifica con el **mock** (misma forma
+de API): Explorar -> fuente -> Popular/Buscar -> ficha -> capitulo -> lector con
+las paginas. Con el servidor real solo cambia la URL en Ajustes.
