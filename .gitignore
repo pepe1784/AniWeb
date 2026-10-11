@@ -32,6 +32,9 @@ Thumbs.db
 # Local tooling (no forma parte del repo)
 .opencode/
 
+# Motor "AniWeb Server" clonado dentro del workspace (por defecto vive fuera, en ../AniWeb-Server)
+AniWeb-Server/
+
 # Logs
 logs/
 *.log
