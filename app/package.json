@@ -1,0 +1,29 @@
+{
+  "name": "aniweb-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PWA de AniWeb: interfaz estilo Nekoyomi sobre el runtime WASM de extensiones",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "dev": "npm run sync:assets && vite",
+    "build": "npm run sync:assets && vite build",
+    "preview": "vite preview",
+    "sync:assets": "node scripts/sync-host.mjs",
+    "icons": "node scripts/gen-icons.mjs",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "svelte": "^5.57.2",
+    "svelte-check": "^4.7.6",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.4",
+    "vite-plugin-pwa": "^2.0.0",
+    "workbox-build": "^7.4.1"
+  }
+}
