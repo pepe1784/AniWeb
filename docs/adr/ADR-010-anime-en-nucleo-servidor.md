@@ -82,6 +82,11 @@ Datos verificados (GitHub, 2026-10-11):
    cubren los runtimes del cliente") y 5 ("upstream, no fork") quedan
    **superados** por esta ADR. El resto de ADR-008 (núcleo self-hosted, clientes
    finos, extensiones multi-runtime) sigue en pie.
+8. **El fork vive en un repo aparte**: "AniWeb Server" = fork de
+   `Suwayomi-Server` (repo `AniWeb-Server`), consumido como motor/dependencia;
+   este repositorio (AniWeb) sigue siendo el producto (web, runtimes, despliegue)
+   y referencia el fork. La capa `anime/` se mantiene **delgada y rebasable**
+   sobre upstream.
 
 ## Alternativas consideradas
 

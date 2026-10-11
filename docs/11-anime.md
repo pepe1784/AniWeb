@@ -193,6 +193,9 @@ Media Session, PiP y recordar posición. `mpv`/transcodificado en JVM: no-objeti
 ## 10. Comandos (borrador)
 
 ```sh
+# Motor: fork "AniWeb Server" (repo aparte; clonar/preparar con server/setup-fork.ps1)
+cd ../AniWeb-Server && ./gradlew run     # servidor en http://localhost:4567
+
 # Servidor AniWeb (Suwayomi + capa de anime; JRE 21+ o Docker)
 docker compose -f server/docker-compose.yml up -d
 # WebUI + API:  http://localhost:4567
