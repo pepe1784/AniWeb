@@ -15,5 +15,9 @@ Formato: ver `0000-template.md`.
 | ADR-007 | Extensiones en repos externos y portado de fuentes (no conversión de APK) | Aceptada |
 | ADR-008 | Núcleo en servidor Suwayomi, clientes finos y extensiones multi-runtime | Aceptada |
 | ADR-009 | Cliente base = Suwayomi-WebUI (reemplaza la UI propia) | Aceptada |
+| ADR-010 | Anime en el núcleo del servidor (capa de anime sobre Suwayomi) | Aceptada |
+| ADR-011 | Runtimes fallback server-side ("aniweb runtime") con cookies y WebView | Aceptada |
+| ADR-012 | Catálogos de repositorio (.json, .min.json, .pb) y tipos de medio | Aceptada |
+| ADR-013 | Reproductor de anime (resolución server-side, reproducción en el cliente) | Aceptada |
 
 Estados posibles: `Propuesta`, `Aceptada`, `Rechazada`, `Reemplazada por ADR-YYY`.
