@@ -99,6 +99,12 @@ Esta forma es compatible con lo que ya expone el WIT de AniWeb
 
 ## 4. El hueco de anime (honestidad)
 
+> **Revisado el 2026-10-11 (ADR-010).** Este apartado queda **superado**: el anime
+> se porta al **núcleo del servidor** (capa de anime sobre Suwayomi, base PR #1876
+> y `source-api` de Aniyomi/Nekoyomi), en lugar de cubrirse solo con runtimes de
+> cliente. Ver `docs/adr/ADR-010-anime-en-nucleo-servidor.md` y `docs/11-anime.md`.
+> Se conserva el análisis original como contexto.
+
 **Suwayomi no soporta anime** y sus mantenedores lo rechazaron: #211 ("Remove
 anime support"), #164 (la API de Aniyomi rompía el soporte) y #365 "[Feature
 Request] Anime Support from Aniyomi fork" cerrado como `not_planned`. Hay un PR
@@ -128,6 +134,12 @@ como transporte configurable para esos runtimes. El tráfico del servidor
 Suwayomi no lo necesita (hace las peticiones server-side).
 
 ## 5. Relación con Suwayomi: upstream, no fork
+
+> **Revisado el 2026-10-11 (ADR-010).** Se admite un **fork/parche controlado**:
+> "AniWeb Server = Suwayomi + capa de anime" (módulo `anime/` rebasable). La
+> relación "upstream, no fork" de este apartado queda **superada** por ADR-010;
+> el resto del razonamiento (no mantener un fork total, consumir upstream
+> estable) sigue vigente.
 
 Decisión: **usar Suwayomi-Server upstream como dependencia** y construir encima el
 cliente y los runtimes fallback. Motivos:

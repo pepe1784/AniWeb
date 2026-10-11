@@ -10,6 +10,13 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 > `docs/adr/ADR-009-cliente-suwayomi-webui.md` (cliente base = Suwayomi-WebUI), y
 > `docs/10-servidor-suwayomi.md`.
 
+> **Replanificación de anime (2026-10-11).** El anime deja de ser un parche del
+> cliente: se **porta al núcleo del servidor** una capa de anime (Suwayomi +
+> extensiones Aniyomi/Nekoyomi), con el runtime JS/WASM ejecutándose **server-side**
+> ("aniweb runtime", con cookies/WebView del servidor), repositorios multi-formato
+> (`.json`/`.min.json`/`.pb`) y un reproductor que **resuelve en el servidor y
+> reproduce en el cliente**. Ver `docs/adr/ADR-010` a `ADR-013` y `docs/11-anime.md`.
+
 ## Fase 0 — Base del repositorio (hecha)
 
 - [x] Skill de proyecto en `.opencode/skills/aniweb`
@@ -112,23 +119,24 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 > ser el *runtime fallback* de la Fase 10. La UI propia (Svelte, `docs/09-app.md`)
 > se eliminó; el cliente base es la Suwayomi-WebUI (ADR-009).
 
-## Fase 10 — Runtimes de extensión fallback (JS/Dart + WASM) y anime
+## Fase 10 — Núcleo de anime, repositorios de extensión y runtime server-side
 
-- [ ] `runtimes/js/`: motor de extensiones JS estilo Mangayomi en Web Worker (shims `Client`, `Document`, cripto) + catálogo
-- [ ] Exponer una extensión JS de anime y la extensión WASM MangaOni como fuentes del cliente
-- [ ] Servicio local opcional "aniweb runtime" con la misma forma de API (para ejecución server-side)
-- [ ] Contrato de fuente (`isManga`, `getPageList` / `getVideoList`) y adaptador al loader WASM
+- [ ] **Capa de anime en el servidor** (fork/parche controlado de Suwayomi; base PR #1876 + `source-api` de Aniyomi/Nekoyomi): tablas `AnimeExtension`/`AnimeSource`/`Anime`/`Episode`/`Video`, runner dex y tipos GraphQL (ADR-010)
+- [ ] **Repositorios y catálogos** `.json` / `.min.json` / `.pb` con normalización; repos Mangayomi con 3 catálogos (manga/anime/novela) y Mihon/Aniyomi (ADR-012)
+- [ ] **`aniweb runtime` server-side** para los runtimes fallback JS/WASM, con cookie jar + WebView/FlareSolverr del servidor (ADR-011)
+- [ ] **Contrato de fuente unificada** (`isManga`, `getDetail`, `getPageList` / `getVideoList`) expuesto por la API del servidor
+- [ ] **UI de anime en la WebUI vendorizada** (`web/`): secciones y ajustes propios (prioridad de fuentes, runtime activo, subtítulos), sin romper manga
 
-**Criterio de aceptación:** buscar y reproducir un episodio de una fuente JS y leer un capítulo de una fuente WASM, ambas integradas en la misma UI.
+**Criterio de aceptación:** con el servidor AniWeb levantado, instalar una extensión de anime Aniyomi desde un repo, buscar un anime, listar episodios y obtener hosters/URLs de vídeo por la API; y hacer lo mismo con una fuente JS/WASM del `aniweb runtime`. Manga sigue funcionando igual.
 
 ## Fase 11 — Reproductor de anime, APK webview y WebGPU (opcional)
 
-- [ ] Reproductor: MSE + hls.js/dash.js, selección de servidor/calidad, subtítulos (WebVTT/ASS), Media Session, PiP, recordar posición
+- [ ] Reproductor cliente (MSE): `hls.js` (y luego `dash.js`), subtítulos WebVTT (y ASS/SSA con JASSUB, búsqueda online server-side), selección de hoster/calidad, proxy de vídeo del servidor, Media Session, PiP, recordar posición (ADR-013)
 - [ ] APK webview delgado apuntando al servidor del usuario; loader de extensiones nativas Aniyomi mientras sea viable
 - [ ] Emparejamiento y reconexión con el servidor remoto (HTTPS, token)
 - [ ] WebGPU opcional con fallback: reescalado Anime4K, mejora de manga, OCR/traducción (ONNX / Transformers.js) y detección automática de soporte
 
-**Criterio de aceptación:** ver un episodio con subtítulos en la PWA, leer con mejora WebGPU (o fallback) y abrir el cliente APK contra un servidor remoto.
+**Criterio de aceptación:** ver un episodio con subtítulos en la PWA (resolución server-side, reproducción en el cliente), leer con mejora WebGPU (o fallback) y abrir el cliente APK contra un servidor remoto.
 
 ## Fase 12 — Riesgos y pulido (entregable final)
 
