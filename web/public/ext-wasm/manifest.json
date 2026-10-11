@@ -1,0 +1,16 @@
+[
+  {
+    "id": "manga-oni",
+    "name": "MangaOni",
+    "lang": "es",
+    "kind": "manga",
+    "entry": "/ext-wasm/manga-oni.wasm"
+  },
+  {
+    "id": "animeav1",
+    "name": "AnimeAV1",
+    "lang": "es",
+    "kind": "anime",
+    "entry": "/ext-wasm/animeav1.wasm"
+  }
+]
