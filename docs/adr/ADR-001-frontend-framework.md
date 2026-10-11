@@ -1,9 +1,13 @@
 # ADR-001: Framework de frontend
 
-- Estado: Aceptada
+- Estado: Reemplazada por ADR-009
 - Fecha: 2026-10-09
 - Fase: 2
 - Decisores: equipo AniWeb
+
+> **Reemplazada por ADR-009 (2026-10-10).** El cliente base dejó de ser una UI
+> propia; AniWeb vendoriza la **Suwayomi-WebUI** (React 19 + MUI) en `web/`. Esta
+> decisión se conserva como histórico del modelo "cliente puro" (Fases 0-8).
 
 ## Contexto
 

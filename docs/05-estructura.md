@@ -10,7 +10,8 @@ Dejar fija la estructura de carpetas que todas las fases siguientes irán llenan
 
 ```
 AniWeb/
-├── app/                        PWA (Svelte 5 + Vite): lector, reproductor, SW   -> Fase 9
+├── web/                        Suwayomi-WebUI vendorizada (React 19 + MUI, MPL-2.0): cliente base   -> Fase 9
+├── server/                     Núcleo Suwayomi-Server (compose, mock, docs)                            -> Fase 9
 ├── packages/
 │   ├── ext-api/                Contrato WIT + bindings TS generados            -> Fase 4 (hecho)
 │   │   ├── wit/extension.wit
@@ -40,7 +41,7 @@ AniWeb/
 │   ├── 05-estructura.md        (este documento)
 │   ├── 06-ext-sdk.md
 │   ├── 07-proxy-cors.md
-│   └── adr/                    ADR-001..007 (Aceptadas)
+│   └── adr/                    ADR-001..009
 ├── README.md, LICENSE (AGPL-3.0), CONTRIBUTING.md
 └── .gitignore, .gitattributes, .editorconfig, .dockerignore
 ```
@@ -49,7 +50,8 @@ AniWeb/
 
 | Ruta | Responsabilidad | Fase que la llena | Estado |
 | --- | --- | --- | --- |
-| `app/` | PWA: UI, lector, reproductor, Service Worker, integración de extensiones | 9 | esqueleto por crear |
+| `web/` | Cliente base: Suwayomi-WebUI vendorizada (React 19 + MUI, MPL-2.0) | 9 | vendorizada (upstream `4914fb1`) |
+| `server/` | Núcleo Suwayomi-Server: compose, mock de desarrollo, docs | 9 | esqueleto creado |
 | `packages/ext-api/` | WIT (fuente de verdad) + bindings TS | 4 | hecho |
 | `packages/ext-host/` | host functions en el navegador | 8 | en curso (manifest, json, crypto, storage listos) |
 | `packages/ext-loader/` | Worker aislado, SHA-256, permisos, límites | 8 | en curso (verificación SHA-256 lista) |
@@ -145,4 +147,4 @@ queda cubierta por el SHA-256 y el flujo no cambia.
 - **Fase 6**: `crates/ext-sdk` con bindings Rust de alto nivel, plantilla de repo multi-extension con catálogo nativo + ecosistema (`index.min.json`, `index.pb`, `repo.json`), y extensiones de ejemplo (manga y anime) en repos externos usando esta plantilla; el stub de bindings Rust del roadmap de la Fase 4 se completa aquí.
 - **Fase 7**: `proxy/` (Worker + Docker) que cumpla lo que `http.request` espera.
 - **Fase 8**: `ext-loader` + `ext-host` consumiendo `packages/ext-api` y el catálogo de la plantilla.
-- **Fase 9**: `app/` (esqueleto desplegable y MVP lector/reproductor).
+- **Fase 9**: `web/` (Suwayomi-WebUI como cliente base, ADR-009) y `server/` (núcleo Suwayomi).

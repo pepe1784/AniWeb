@@ -9,7 +9,7 @@
 
 - **Conventional Commits**, mensajes en inglés: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`, `perf:`, `build(ci):`.
 - **Commits pequeños**: un cambio lógico por commit.
-- Scope por área: `app`, `ext-api`, `ext-host`, `ext-loader`, `ext-sdk`, `proxy`, `infra`, `ci`, `docs`.
+- Scope por área: `web`, `server`, `ext-api`, `ext-host`, `ext-loader`, `ext-sdk`, `proxy`, `infra`, `ci`, `docs`.
 - Cuerpo opcional explicando el porqué cuando no sea obvio.
 
 ## Estilo

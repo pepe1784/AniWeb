@@ -13,7 +13,8 @@ servidor:
 
 Suwayomi es **solo manga**. El anime se cubre en los runtimes fallback del
 cliente (JS/Dart y WASM), no aqui. Ver `docs/10-servidor-suwayomi.md`,
-`docs/11-suwayomi-api.md` y `docs/adr/ADR-008-nucleo-servidor-suwayomi.md`.
+`docs/adr/ADR-008-nucleo-servidor-suwayomi.md` y
+`docs/adr/ADR-009-cliente-suwayomi-webui.md`.
 
 ## Levantar el servidor (real)
 
@@ -39,10 +40,9 @@ la parte cliente hay un **mock** que implementa la misma forma de API
 node server/mock/mock-server.mjs          # escucha en http://localhost:4567
 ```
 
-La PWA no distingue mock de servidor real: solo cambia la URL base. El mock sirve
-una fuente "MangaOni (mock)", varios mangas, capitulos y paginas; permite probar
-busqueda, detalle y lector de punta a punta.
+Servia al cliente REST propio (eliminado). La **Suwayomi-WebUI** usa **GraphQL**,
+asi que el mock no la alimenta todavia: se conserva como base para un futuro mock
+GraphQL.
 
-> El mock es una herramienta de desarrollo, no forma parte del producto. La
-> verificacion de la Fase 9 contra el **servidor real** queda pendiente de un
-> entorno con Docker/JRE.
+> El mock es una herramienta de desarrollo, no forma parte del producto. La via
+> recomendada es el **servidor real**, que ademas sirve la WebUI.

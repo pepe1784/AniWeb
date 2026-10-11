@@ -6,7 +6,8 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 > 100% cliente) se mantienen, pero pasan a ser el **runtime fallback**. La Fase 9
 > se reorienta a un **núcleo de servidor Suwayomi (self-hosted)** con clientes
 > finos (PWA + APK webview) y extensiones multi-lenguaje (nativo APK, JS/Dart y
-> WASM). Motivación y detalles: `docs/adr/ADR-008-nucleo-servidor-suwayomi.md` y
+> `docs/adr/ADR-008-nucleo-servidor-suwayomi.md` (núcleo de servidor) y
+> `docs/adr/ADR-009-cliente-suwayomi-webui.md` (cliente base = Suwayomi-WebUI), y
 > `docs/10-servidor-suwayomi.md`.
 
 ## Fase 0 — Base del repositorio (hecha)
@@ -27,8 +28,8 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 - [x] Diagrama de arquitectura y capas en `docs/02-arquitectura.md`
 - [x] ADRs en `docs/adr/` (con pros/contras):
-  - ADR-001: framework de frontend (Svelte 5 + Vite SPA)
-  - ADR-002: PWA y Service Worker (`vite-plugin-pwa` + `injectManifest`)
+  - ADR-001: framework de frontend (Svelte 5 + Vite SPA) — reemplazada por ADR-009
+  - ADR-002: PWA y Service Worker (`vite-plugin-pwa` + `injectManifest`) — reemplazada por ADR-009
   - ADR-003: toolchain de extensiones (WIT + Component Model + `jco`)
   - ADR-004: diseño del proxy CORS (Worker + Docker)
   - ADR-005: almacenamiento (IndexedDB + OPFS) y persistencia
@@ -102,15 +103,14 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 - [ ] `server/`: compose de Suwayomi-Server (self-hosted) + doc de arranque y de la API REST/GraphQL (auth, fuentes, biblioteca, capítulos, páginas)
 - [ ] Contrato de "fuente unificada" en el cliente (fuentes del servidor + runtimes fallback)
-- [ ] Cliente PWA conectado al servidor: ajustes de conexión, Biblioteca, Explorar fuentes, detalle, lector
-- [ ] Lector base: paginado, webtoon, RTL, precarga, zoom; páginas vía `<img>`
+- [ ] Cliente base = **Suwayomi-WebUI** vendorizada en `web/` (React 19 + MUI, MPL-2.0, ADR-009); la entrega principal la sirve el propio servidor en el mismo origen
 - [ ] `docs/10-servidor-suwayomi.md` como plano de la fase
 
-**Criterio de aceptación:** leer un capítulo completo desde la PWA contra un servidor Suwayomi local con MangaOni instalado.
+**Criterio de aceptación:** leer un capítulo completo desde la WebUI (servida por el servidor) contra un Suwayomi-Server local con una extensión de manga instalada.
 
 > **Nota histórica:** el trabajo WASM/proxy de las Fases 0-8 no se pierde; pasa a
-> ser el *runtime fallback* de la Fase 10. El plano de UI en `docs/09-app.md` se
-> reutiliza como base del cliente.
+> ser el *runtime fallback* de la Fase 10. La UI propia (Svelte, `docs/09-app.md`)
+> se eliminó; el cliente base es la Suwayomi-WebUI (ADR-009).
 
 ## Fase 10 — Runtimes de extensión fallback (JS/Dart + WASM) y anime
 

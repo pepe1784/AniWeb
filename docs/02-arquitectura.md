@@ -2,6 +2,13 @@
 
 > Fase 2 del roadmap. Define capas, límites de confianza y flujos. Las decisiones concretas (con pros/contras) viven en `docs/adr/`.
 
+> **Nota de replanificación (2026-10-10).** Este documento describe el modelo
+> original "100% cliente" (Fases 0-8). Sigue siendo válido para el **runtime
+> fallback** (WASM + proxy), pero el camino principal es hoy un **núcleo de
+> servidor Suwayomi** con la **Suwayomi-WebUI** como cliente base. Ver
+> `docs/10-servidor-suwayomi.md`, `docs/adr/ADR-008-nucleo-servidor-suwayomi.md` y
+> `docs/adr/ADR-009-cliente-suwayomi-webui.md`.
+
 ## Objetivos de diseño
 
 - 100% cliente: build estático, PWA instalable, sin backend propio.
@@ -15,7 +22,7 @@
 ```mermaid
 flowchart TD
   subgraph Cliente["PWA (navegador)"]
-    UI["UI (Svelte 5)"]
+    UI["UI (Suwayomi-WebUI)"]
     CORE["App Core (dominio)"]
     READER["Lector de manga"]
     PLAYER["Reproductor de video"]
@@ -56,7 +63,7 @@ flowchart TD
 
 | Capa | Responsabilidad | No debe |
 | --- | --- | --- |
-| UI (Svelte 5) | Vistas, interacción, estado de presentación | Contener lógica de red o de extensiones |
+| UI (Suwayomi-WebUI, React + MUI) | Vistas, interacción, estado de presentación | Contener lógica de red o de extensiones |
 | App Core | Modelos de dominio, biblioteca, historial, categorías, ajustes, gestor de descargas, backups | Depender de componentes UI |
 | ext-loader | Cargar índices, verificar hashes, instalar/actualizar/quitar extensiones, ciclo de vida de Workers | Ejecutar WASM en el hilo principal |
 | ext-host | Implementar `http_request`, parser HTML, JSON, crypto, base64, logging | Dar acceso a DOM, cookies de la app o red directa |
@@ -139,18 +146,9 @@ sequenceDiagram
 La versión definitiva se fija en la Fase 5. Borrador alineado con el mapa de la skill:
 
 ```
-app/
-  src/
-    routes/            vistas Svelte
-    lib/core/          dominio, repositorios, settings, downloads
-    lib/storage/       IndexedDB (idb) y OPFS
-    lib/reader/        motor del lector
-    lib/player/        motor del reproductor
-    lib/processing/    pipeline WebGPU/WebGL con fallback
-    lib/net/           ProxyClient
-    lib/ext/           puente hacia ext-loader/ext-host
-    workers/           service worker
-  public/              manifest.webmanifest, iconos
+web/                  Suwayomi-WebUI vendorizada (cliente base, ADR-009)
+  src/                código de la WebUI (React 19 + MUI, MPL-2.0)
+  build/              salida de `pnpm build`
 packages/
   ext-api/             WIT + tipos TS generados
   ext-host/            host functions
@@ -167,8 +165,8 @@ docs/                  este directorio
 
 | Área | Candidato | Nota |
 | --- | --- | --- |
-| Build/UI | Vite + Svelte 5 | ADR-001 |
-| PWA | vite-plugin-pwa (injectManifest) | ADR-002 |
+| Build/UI | Vite + React 19 + MUI (Suwayomi-WebUI) | ADR-009 |
+| PWA | vite-plugin-pwa (WebUI) | ADR-009 |
 | Storage | `idb` | ADR-005 |
 | Video | hls.js, dash.js | Fase 9 |
 | Subtítulos ASS | JASSUB | Fase 9 |

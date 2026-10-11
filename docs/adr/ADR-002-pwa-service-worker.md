@@ -1,9 +1,13 @@
 # ADR-002: Estrategia de PWA y Service Worker
 
-- Estado: Aceptada
+- Estado: Reemplazada por ADR-009
 - Fecha: 2026-10-09
 - Fase: 2
 - Decisores: equipo AniWeb
+
+> **Reemplazada por ADR-009 (2026-10-10).** El cliente base es ahora la
+> **Suwayomi-WebUI**, que trae su propia estrategia PWA (`vite-plugin-pwa`). Esta
+> decisión se conserva como histórico del modelo "cliente puro" (Fases 0-8).
 
 ## Contexto
 

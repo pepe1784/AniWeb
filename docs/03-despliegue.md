@@ -2,6 +2,13 @@
 
 > Fase 3 del roadmap. Tres rutas equivalentes: **GitHub Pages** (sin servidor), **Docker** (autoalojado) y **hosting estático** (Cloudflare Pages / Netlify). Las tres sirven los mismos estáticos; la principal diferencia es dónde y cómo.
 
+> **Replanificación (2026-10-10).** El cliente base es la **Suwayomi-WebUI**
+> (ADR-009) y su entrega principal es el propio **servidor Suwayomi** (mismo
+> origen, sin CORS). Las rutas de hosting estático sirven esa WebUI, que asume
+> **raíz de dominio** (`<base href="/">`): un *project site* de GitHub Pages
+> (`/repo/`) requeriría adaptar la base path. Donde este documento decía `app/`
+> léase `web/`.
+
 ## Requisitos comunes de la PWA
 
 1. **HTTPS obligatorio**: los Service Workers y la instalación PWA solo funcionan en orígenes seguros. Las tres rutas lo cumplen (Pages/Netlify/Cloudflare automático; Docker con Caddy auto-cert o Cloudflare Tunnel).
@@ -93,7 +100,7 @@ docker compose -f infra/docker-compose.yml -f infra/docker-compose.caddy.yml up 
 ### Cloudflare Pages (pasos mínimos)
 
 1. Repo conectado a Cloudflare Pages (Import GitHub repo).
-2. Build command: `npm ci && npm run build` en `app/`; output: `dist`.
+2. Build command: `corepack pnpm install --frozen-lockfile && corepack pnpm build` en `web/`; output: `build`.
 3. Deploy automático por push a `main`; HTTPS automático.
 4. Variables: `VITE_BASE_PATH=/` (o la subruta de tu dominio).
 5. DNS/dominio propio: Pages asigna `*.pages.dev`; se puede usar dominio propio en Cloudflare.
@@ -113,13 +120,13 @@ docker compose -f infra/docker-compose.yml -f infra/docker-compose.caddy.yml up 
 ### Netlify
 
 1. New site → Import from Git.
-2. Build `npm ci && npm run build`, publish `dist`.
+2. Build `corepack pnpm install --frozen-lockfile && corepack pnpm build`, publish `build`.
 3. `netlify.toml` (o UI):
 ```toml
 [build]
-  base = "app"
-  command = "npm ci && npm run build"
-  publish = "dist"
+  base = "web"
+  command = "corepack pnpm install --frozen-lockfile && corepack pnpm build"
+  publish = "build"
 
 [[headers]]
   for = "/sw.js"

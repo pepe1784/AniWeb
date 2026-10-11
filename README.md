@@ -1,22 +1,34 @@
 # AniWeb
 
-> PWA de anime y manga al estilo Aniyomi/Tachiyomi — **sin APK, sin backend, sin tiendas**.
-> Extensiones en WebAssembly (WIT/Rust) ejecutadas en Web Workers aislados.
+> Cliente de anime y manga al estilo Aniyomi/Tachiyomi sobre un **núcleo de
+> servidor Suwayomi self-hosted**. El cliente base es la **Suwayomi-WebUI**
+> (MPL-2.0); la UX de anime y los runtimes de extensión son el valor propio.
 
-AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nekoyomi](https://github.com/Nekoyomi/Nekoyomi) y [Suwayomi](https://github.com/Suwayomi/Suwayomi), pero **no es un port**: el runtime de extensiones, las APIs y la estructura se rehacen desde cero para funcionar 100% en el navegador como PWA instalable.
+AniWeb se apoya en [Suwayomi](https://github.com/Suwayomi/Suwayomi) (servidor y
+WebUI oficial) y se inspira en [Aniyomi](https://github.com/aniyomiorg/aniyomi),
+[Nekoyomi](https://github.com/Nekoyomi/Nekoyomi) y Mangayomi. El núcleo y el
+cliente base son proyectos estables de terceros; el valor propio está en la UX de
+anime y en los runtimes de extensión fallback (WASM y JS/Dart).
 
 ## Estado
 
-- **Fase actual:** 7/10 — proxy CORS mínimo (entregado, pendiente de confirmación)
+- **Fase actual:** 9/12 — núcleo de servidor Suwayomi y cliente base
+  (**Suwayomi-WebUI**).
 - Ver [docs/00-roadmap.md](docs/00-roadmap.md) para el plan completo por fases.
 
 ## Principios
 
-1. **Cero APK.** La app se abre desde una URL HTTPS y se instala como PWA ("Agregar a pantalla de inicio"). Sin Capacitor, Tauri, Electron ni tiendas.
-2. **100% estática.** Todo corre en el cliente; sin backend propio con lógica.
-3. **Extensiones = WASM.** Módulos compilados a WebAssembly con interfaz WIT, en Web Workers aislados. Prohibido `eval()` y scripts descargados.
-4. **Red controlada.** Las extensiones no acceden a la red directamente: usan host functions restringidas a los dominios de su manifiesto, enrutadas por un proxy CORS mínimo y configurable.
-5. **Privacidad.** El proxy ve el tráfico; el proyecto recomienda que cada quien despliegue el suyo (Cloudflare Worker de plantilla o contenedor Docker).
+1. **Núcleo en servidor.** El motor es **Suwayomi-Server** (self-hosted, MPL-2.0):
+   ejecuta las extensiones nativas del ecosistema (Mihon/Tachiyomi) y aporta
+   catálogo, biblioteca, descargas, tracking y OPDS.
+2. **Cliente base Suwayomi-WebUI.** El cliente es la WebUI oficial, vendorizada en
+   `web/` con sus avisos **MPL-2.0**. La UX de anime se construye encima.
+3. **Clientes finos.** La PWA la sirve el propio servidor (mismo origen) y el APK
+   es un webview delgado que apunta al servidor; no se reimplementa el lector.
+4. **Runtimes fallback.** WASM (WIT/Rust, `packages/ext-*`) y JS/Dart cubren anime
+   y fuentes que el servidor no toca; su red pasa por el proxy CORS configurable.
+5. **Privacidad.** El servidor es del usuario. El proxy ve el tráfico; conviene
+   desplegar el propio.
 
 ## Docs
 
@@ -30,6 +42,7 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 | [docs/05-estructura.md](docs/05-estructura.md) | Estructura del monorepo y plantilla de repo de extensiones |
 | [docs/06-ext-sdk.md](docs/06-ext-sdk.md) | SDK de extensiones, toolchain en Windows, formatos del ecosistema y extensiones de ejemplo |
 | [docs/07-proxy-cors.md](docs/07-proxy-cors.md) | Proxy CORS: contrato HTTP, despliegue (Worker/Docker), variables y privacidad |
+| [docs/10-servidor-suwayomi.md](docs/10-servidor-suwayomi.md) | Núcleo de servidor Suwayomi y runtimes de extensión |
 | [docs/adr/](docs/adr/README.md) | Registro de decisiones de arquitectura (ADRs) |
 
 ## Estructura
@@ -37,7 +50,8 @@ AniWeb está inspirado en [Aniyomi](https://github.com/aniyomiorg/aniyomi), [Nek
 La estructura se crea por fases; cada carpeta ya creada tiene su README con propósito, estado y fase pendiente. Árbol y detalle en [docs/05-estructura.md](docs/05-estructura.md):
 
 ```
-app/                  PWA (Svelte 5 + Vite): lector, reproductor, Service Worker
+web/                  Suwayomi-WebUI vendorizada (React 19 + MUI, MPL-2.0): cliente base
+server/               Núcleo Suwayomi-Server: compose, mock de desarrollo y docs
 packages/ext-api/     Definiciones WIT del runtime de extensiones + bindings TS
 packages/ext-host/    Host functions en el navegador (http, parser, crypto…)
 packages/ext-loader/  Carga de .wasm en Workers aislados, hash, permisos

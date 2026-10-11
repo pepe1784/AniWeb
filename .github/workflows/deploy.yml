@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Permisos mínimos para publicar en GitHub Pages
+# Permisos minimos para publicar en GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -20,36 +20,41 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: app
+        working-directory: web
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.2
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
-      - name: Build PWA
-        run: npm run build
+      - name: Build WebUI
+        run: pnpm build
         env:
-          # Base path para Vite:
-          #   "/"            -> repo "usuario/usuario.github.io" (user site)
+          # Base path para la WebUI (ver ADR-009):
+          #   "/"            -> raiz de dominio (user site / servidor Suwayomi)
           #   "/<nombre>/"   -> project site (ej: /AniWeb/)
-          # El Service Worker se registra en <base>/sw.js con scope <base>/.
+          # La WebUI inyecta <base href="VITE_BASE_PATH"> (web/vite.config.ts).
           VITE_BASE_PATH: ${{ github.event.repository.name != github.repository_owner && format('/{0}/', github.event.repository.name) || '/' }}
 
       - name: Prepare GitHub Pages assets
         run: |
-          touch dist/.nojekyll
-          cp dist/index.html dist/404.html
+          touch build/.nojekyll
+          cp build/index.html build/404.html
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: app/dist
+          path: web/build
 
   deploy:
     needs: build

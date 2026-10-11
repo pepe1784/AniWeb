@@ -66,7 +66,8 @@ Datos verificados de los proyectos de referencia (consulta a la API de GitHub,
    catálogo, biblioteca, descargas, tracking, OPDS y WebView/FlareSolverr. AniWeb
    lo consume por su **API REST/GraphQL**.
 2. **Clientes finos**:
-   - **PWA** (Svelte 5 + Vite): cliente principal; unifica manga + anime y aporta
+   - **PWA** = **Suwayomi-WebUI** (React 19 + MUI, MPL-2.0, carpeta `web/`; ver
+     ADR-009): cliente principal; unifica manga + anime y aporta
      la UX propia (estilo Nekoyomi).
    - **APK** (webview delgado): apunta al **servidor del usuario**; mientras
      Google lo permita, puede además ejecutar extensiones nativas Aniyomi.
@@ -157,7 +158,7 @@ Datos verificados de los proyectos de referencia (consulta a la API de GitHub,
 - `docs/10-servidor-suwayomi.md` (plano del pivote)
 - `.opencode/skills/aniweb/SKILL.md` (reglas actualizadas)
 - ADR-004 (proxy CORS), ADR-007 (extensiones externas y portado)
-- `docs/09-app.md` (interfaz del cliente, previa al pivote)
+- `docs/adr/ADR-009-cliente-suwayomi-webui.md` (cliente base = Suwayomi-WebUI)
 - Suwayomi-Server: `Suwayomi/Suwayomi-Server` (MPL-2.0), issues #211, #164, #365,
   PR #1876
 - Mangayomi: `kodjodevf/mangayomi` (Apache-2.0) y `kodjodevf/mangayomi-extensions`

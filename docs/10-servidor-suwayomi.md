@@ -2,9 +2,10 @@
 
 > Documento de replanificación. Sustituye el enfoque "PWA 100% cliente" por un
 > **núcleo de servidor Suwayomi self-hosted**, con clientes finos (PWA y APK
-> webview) y **runtimes de extensión multi-lenguaje**. La decisión está en
-> `docs/adr/ADR-008-nucleo-servidor-suwayomi.md`. El estado de implementación vive
-> en `docs/00-roadmap.md`.
+> webview) y **runtimes de extensión multi-lenguaje**. Las decisiones están en
+> `docs/adr/ADR-008-nucleo-servidor-suwayomi.md` (núcleo de servidor) y
+> `docs/adr/ADR-009-cliente-suwayomi-webui.md` (cliente base = Suwayomi-WebUI). El
+> estado de implementación vive en `docs/00-roadmap.md`.
 
 ## 1. Por qué cambiamos
 
@@ -47,7 +48,7 @@ punto de partida del cliente.
               +-------------------+-------------------+
               |                                       |
 +-----------------------------+       +-------------------------------+
-|  PWA (Svelte 5 + Vite)      |       |  APK webview (delgado)        |
+|  PWA (Suwayomi-WebUI)      |       |  APK webview (delgado)        |
 |  manga + anime unificados   |       |  apunta al servidor del       |
 |  runtimes fallback JS/WASM  |       |  usuario; extensiones nativas |
 |  lector y reproductor       |       |  Aniyomi mientras sea viable  |
@@ -148,7 +149,8 @@ Reutiliza:
 - `packages/ext-loader`, `packages/ext-host`, `packages/ext-api`,
   `crates/ext-sdk` (runtime WASM, ahora fallback).
 - `proxy/` (ADR-004) para los runtimes de cliente.
-- `docs/09-app.md` (UX del cliente) y el esqueleto `app/` (Svelte 5 + Vite).
+- `web/` (Suwayomi-WebUI vendorizada, MPL-2.0) como base del cliente (ADR-009);
+  la UX de anime se construye encima.
 - La investigación de UI (Nekoyomi, Mihon, Animiru, Suwayomi).
 
 Archiva / degrada:
@@ -163,9 +165,8 @@ Archiva / degrada:
   - [ ] `server/`: compose de Suwayomi-Server + documentación de arranque y de la
     API REST/GraphQL (auth, endpoints de fuentes, biblioteca, capítulos, páginas).
   - [ ] Contrato de "fuente unificada" en el cliente (servidor + runtimes).
-  - [ ] Cliente PWA que conecta con el servidor: ajustes de conexión, biblioteca,
-    Explorar fuentes, detalle, lector (delegando la lectura en la WebUI cuando
-    convenga).
+  - [ ] Cliente: **Suwayomi-WebUI** (vendorizada en `web/`, ver ADR-009) como
+    base; la entrega principal la sirve el propio servidor en el mismo origen.
   - [ ] Criterio: leer un capítulo completo desde la PWA contra un servidor
     Suwayomi local con MangaOni instalado.
 - **Fase 10 — Runtimes de extensión fallback (JS/Dart + WASM) y anime.**
@@ -200,9 +201,8 @@ docker compose -f server/docker-compose.yml up -d
 # WebUI del servidor:  http://localhost:4567
 # API REST/GraphQL:    http://localhost:4567/api/...
 
-# Cliente PWA
-cd app && npm install && npm run dev
-# En Ajustes: URL del servidor Suwayomi; opcional URL del proxy CORS
+# Cliente: lo sirve el propio servidor en http://localhost:4567
+# (WebUI vendorizada en web/; para alojarla aparte: cd web && pnpm install && pnpm build)
 ```
 
 ## 9. Riesgos principales
@@ -219,6 +219,6 @@ cd app && npm install && npm run dev
 ## Referencias
 
 - `docs/adr/ADR-008-nucleo-servidor-suwayomi.md`
-- `docs/09-app.md`, `docs/08-loader.md`, `docs/06-ext-sdk.md`
+- `web/` (Suwayomi-WebUI vendorizada), `docs/08-loader.md`, `docs/06-ext-sdk.md`
 - `docs/adr/ADR-004-cors-proxy.md`, `docs/adr/ADR-007-extensiones-externas.md`
 - Suwayomi-Server, Suwayomi-WebUI, Mangayomi (GitHub)
