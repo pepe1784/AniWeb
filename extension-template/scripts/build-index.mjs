@@ -45,6 +45,7 @@ import {
   rmSync,
 } from "node:fs";
 import { spawnSync } from "node:child_process";
+import { tmpdir as osTmpdir } from "node:os";
 import { dirname, join, basename, isAbsolute } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -271,6 +272,76 @@ function copyWasm(meta, extId) {
 }
 
 // ---------------------------------------------------------------------------
+// Bundle transpilado para navegador (jco). Opcional, se activa con JCO_BIN.
+// ---------------------------------------------------------------------------
+
+// Transpila el componente WASM con jco a JS + core wasm y reescribe los
+// specifiers "bare" a las rutas servibles de la app (mismo detalle que
+// packages/ext-loader/browser-e2e/serve.mjs y docs/08-loader.md):
+//   from 'aniweb:extension/<x>'                 -> from '/host/wit-imports/<x>.mjs'
+//   from '@bytecodealliance/preview2-shim/<x>'  -> from '/shim/<x>.js'
+// Devuelve el objeto `bundle` del catalogo o null si no hay jco.
+function emitBundle(extId, meta) {
+  const jcoBin = process.env.JCO_BIN;
+  if (!jcoBin) {
+    console.log(`  ${extId}: sin JCO_BIN, solo .wasm (bundle pendiente)`);
+    return null;
+  }
+  const version = meta.version;
+  const wasmSrc = join(wasmDir, `${extId}.wasm`);
+  const work = join(osTmpdir(), `aniweb-bundle-${extId}-${Date.now()}`);
+  const outDir = join(work, "out");
+  mkdirSync(outDir, { recursive: true });
+  const res = spawnSync(jcoBin, ["transpile", wasmSrc, "-o", outDir, "--name", extId], {
+    encoding: "utf8",
+    shell: process.platform === "win32",
+  });
+  if (res.status !== 0) {
+    console.error(res.stdout || "");
+    console.error(res.stderr || "");
+    fail(`jco no pudo transpilar '${extId}' (revisa JCO_BIN)`);
+  }
+  const transpiledName = `${extId}.js`;
+  const jsPath = join(outDir, transpiledName);
+  if (!existsSync(jsPath)) fail(`jco no emitio ${transpiledName} para '${extId}'`);
+  let js = readFileSync(jsPath, "utf8");
+  js = js.replace(
+    /from '(aniweb:extension\/(?:crypto|http|json|logging|parsing|storage))'/g,
+    (_, spec) => `from '/host/wit-imports/${spec.split("/").pop()}.mjs'`,
+  );
+  js = js.replace(
+    /from '(@bytecodealliance\/preview2-shim\/(?:cli|filesystem|io))'/g,
+    (_, spec) => `from '/shim/${spec.split("/").pop()}.js'`,
+  );
+  writeFileSync(jsPath, js);
+
+  const bundleDir = join(storeDir, extId, "bundle", `${extId}-${version}`);
+  mkdirSync(bundleDir, { recursive: true });
+  const files = [];
+  for (const name of readdirSync(outDir)) {
+    const full = join(outDir, name);
+    if (!existsSync(full) || statSync(full).isDirectory()) continue;
+    if (name.endsWith(".d.ts")) continue; // tipos: no se necesitan en runtime
+    const bytes = readFileSync(full);
+    const sha256 = createHash("sha256").update(bytes).digest("hex");
+    const size = bytes.byteLength;
+    copyFileSync(full, join(bundleDir, name));
+    if (name === transpiledName) {
+      files.unshift({ name, url: `${extId}/bundle/${extId}-${version}/${name}`, sha256, size, entry: true });
+    } else {
+      files.push({ name, url: `${extId}/bundle/${extId}-${version}/${name}`, sha256, size });
+    }
+  }
+  rmSync(work, { recursive: true, force: true });
+  const bundle = {
+    entry: transpiledName,
+    files: files.map(({ entry: _entry, ...file }) => file),
+  };
+  console.log(`  ${extId}: bundle transpilado (${files.length} archivos, ${bundleDir})`);
+  return bundle;
+}
+
+// ---------------------------------------------------------------------------
 // Recolecta los datos de cada extension
 // ---------------------------------------------------------------------------
 
@@ -305,6 +376,10 @@ for (const extId of extIds) {
     iconUrl = /^https?:\/\//.test(meta.icon) ? meta.icon : url(meta.icon);
   }
 
+  // Bundle transpilado con jco (opcional, activado con JCO_BIN): necesario
+  // para que el artefacto corra en el navegador sin Node.
+  const bundle = emitBundle(extId, meta);
+
   // Entrada nativa AniWeb.
   entries.push({
     native: {
@@ -318,6 +393,7 @@ for (const extId of extIds) {
       sites: meta.sites || [],
       ...(meta["default-proxy"] ? { "default-proxy": meta["default-proxy"] } : {}),
       wasm: { url: wasmUrl, sha256, size },
+      ...(bundle ? { bundle } : {}),
       ...(minisign ? { minisign } : {}),
       "updated-at": nowIso,
     },
