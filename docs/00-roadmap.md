@@ -101,12 +101,12 @@ Plan de trabajo por **fases con confirmación**: no se avanza a la fase siguient
 
 ## Fase 9 — Núcleo de servidor y cliente base, manga (reformulada)
 
-- [ ] `server/`: compose de Suwayomi-Server (self-hosted) + doc de arranque y de la API REST/GraphQL (auth, fuentes, biblioteca, capítulos, páginas)
-- [ ] Contrato de "fuente unificada" en el cliente (fuentes del servidor + runtimes fallback)
-- [ ] Cliente base = **Suwayomi-WebUI** vendorizada en `web/` (React 19 + MUI, MPL-2.0, ADR-009); la entrega principal la sirve el propio servidor en el mismo origen
-- [ ] `docs/10-servidor-suwayomi.md` como plano de la fase
+- [x] `server/`: compose de Suwayomi-Server (self-hosted) + doc de arranque y de la API REST/GraphQL (auth, fuentes, biblioteca, capítulos, páginas)
+- [x] Contrato de "fuente unificada" en el cliente (fuentes del servidor + runtimes fallback) — verificado en integración
+- [x] Cliente base = **Suwayomi-WebUI** vendorizada en `web/` (React 19 + MUI, MPL-2.0, ADR-009); la entrega principal la sirve el propio servidor en el mismo origen
+- [x] `docs/10-servidor-suwayomi.md` como plano de la fase
 
-**Criterio de aceptación:** leer un capítulo completo desde la WebUI (servida por el servidor) contra un Suwayomi-Server local con una extensión de manga instalada.
+**Criterio de aceptación:** leer un capítulo completo desde la WebUI (servida por el servidor) contra un Suwayomi-Server local con una extensión de manga instalada. (Verificado: MangaDex instalado; `fetchMangaAndChapters` + `fetchChapterPages` + página devuelta HTTP 200.)
 
 > **Nota histórica:** el trabajo WASM/proxy de las Fases 0-8 no se pierde; pasa a
 > ser el *runtime fallback* de la Fase 10. La UI propia (Svelte, `docs/09-app.md`)
