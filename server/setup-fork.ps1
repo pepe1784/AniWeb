@@ -3,7 +3,11 @@
 # Uso:
 #   powershell -ExecutionPolicy Bypass -File server/setup-fork.ps1
 #   powershell -ExecutionPolicy Bypass -File server/setup-fork.ps1 -ForkUrl https://github.com/USUARIO/AniWeb-Server.git
-# Requiere git. Para construir, JDK 21+ y Gradle 8.x (./gradlew run).
+# Requiere git. Para construir, JDK 21+ y Gradle 8.x.
+# NOTA (memoria del daemon de Kotlin): `:server:compileKotlin` puede fallar con
+# "OutOfMemoryError: GC overhead limit exceeded" en el backend de bytecode (p.ej.
+# BackupServerSettings$$serializer) si el daemon de Kotlin no tiene suficiente heap.
+# Añade `-Pkotlin.daemon.jvmargs=-Xmx6g` al comando de Gradle (ver "Construir" abajo).
 
 param(
     [string]$ForkUrl = "https://github.com/pepe1784/AniWeb-Server.git",
@@ -34,4 +38,9 @@ Write-Host "  - rama    : aniweb/anime (capa de anime; base PR #1876 + source-ap
 Write-Host ""
 Write-Host "Siguiente: crea el repo vacio '$ForkUrl' en GitHub y haz el primer push:"
 Write-Host "  cd $Dir; git push -u origin aniweb/anime; git push -u origin master"
-Write-Host "Construir: cd $Dir; ./gradlew run   (requiere JDK 21)"
+Write-Host "Construir (requiere JDK 21; el daemon de Kotlin necesita ~6G de heap):"
+Write-Host "  cd $Dir"
+Write-Host "  # compilar solo (marca: sin -Pkotlin.daemon.jvmargs da OOM en el backend de bytecode)"
+Write-Host "  .\gradlew.bat -Pkotlin.daemon.jvmargs=-Xmx6g :server:compileKotlin"
+Write-Host "  # compilar y arrancar el servidor"
+Write-Host "  .\gradlew.bat -Pkotlin.daemon.jvmargs=-Xmx6g :server:run"
