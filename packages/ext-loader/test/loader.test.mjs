@@ -1,14 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { sha256Hex } from "../src/verify.mjs";
+import { getLatestExtension } from "../src/catalog.mjs";
 import {
   buildHostConfig,
   checkUpdate,
   computeArtifactPaths,
+  createSandbox,
   fetchArtifact,
   installArtifacts,
 } from "../src/loader.mjs";
-import { getLatestExtension } from "../src/catalog.mjs";
 
 const SHA = "a".repeat(64);
 
@@ -146,4 +147,72 @@ test("checkUpdate detecta version nueva en el catalogo", () => {
   assert.equal(upgrade.version, "0.2.0");
   assert.equal(getLatestExtension(catalog, "manga-oni").version, "0.2.0");
   assert.equal(checkUpdate({ id: "manga-oni", version: "0.2.0" }, catalog), null);
+});
+
+// Worker controlado por el test para ejercitar el sandbox sin navegador.
+function fakeWorker(script) {
+  const listeners = { message: [], error: [] };
+  const worker = {
+    posted: [],
+    script,
+    terminate() {
+      worker.terminated = true;
+    },
+    addEventListener(type, handler) {
+      listeners[type].push(handler);
+    },
+    removeEventListener(type, handler) {
+      listeners[type] = listeners[type].filter((fn) => fn !== handler);
+    },
+    postMessage(message) {
+      worker.posted.push(message);
+      const reply = script(message);
+      if (reply && typeof reply.then === "function") {
+        reply.then((data) => queueMicrotask(() => listeners.message.forEach((fn) => fn({ data }))));
+      } else if (reply) {
+        queueMicrotask(() => listeners.message.forEach((fn) => fn({ data: reply })));
+      }
+    },
+  };
+  return worker;
+}
+
+test("createSandbox acepta un Worker ya construido y despacha start/call", async () => {
+  const entries = [];
+  const worker = fakeWorker((message) => {
+    if (message.type === "instantiate") {
+      entries.push(message.entryUrl);
+      return { type: "ready", id: "manga-oni" };
+    }
+    if (message.type === "call") {
+      return { type: "result", ok: [{ id: "naruto", title: "Naruto", url: "https://manga-oni.com/manga/naruto/", "thumbnail-url": "x" }], truncated: false };
+    }
+    return { type: "error", reason: "mensaje no soportado" };
+  });
+
+  const sandbox = createSandbox({
+    worker,
+    entryUrl: "/pkg/manga-oni/manga-oni.js",
+    hostConfig: { id: "manga-oni", sites: ["manga-oni.com"] },
+  });
+
+  const started = await sandbox.start("{}");
+  assert.equal(started, sandbox);
+  assert.equal(sandbox.started, true);
+  assert.equal(entries[0], "/pkg/manga-oni/manga-oni.js");
+
+  const result = await sandbox.call("searchManga", ["naruto", 1]);
+  assert.equal(result.ok[0].title, "Naruto");
+  assert.equal(worker.terminated, undefined);
+
+  sandbox.terminate();
+  assert.equal(worker.terminated, true);
+});
+
+test("createSandbox falla con el worker proporcionado en los errores del Worker", async () => {
+  const worker = fakeWorker(() => {
+    throw new Error("boom");
+  });
+  const sandbox = createSandbox({ worker, entryUrl: "/pkg/x.js", hostConfig: {} });
+  await assert.rejects(() => sandbox.start(), /boom/);
 });

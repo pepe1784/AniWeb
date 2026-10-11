@@ -123,9 +123,14 @@ export function checkUpdate(installed, catalog) {
 }
 
 // Area de trabajo: un Worker de modulo aislado por extension.
-export function createSandbox({ entryUrl, hostConfig, workerUrl, limits } = {}) {
+//
+// `worker` (opcional) permite pasar un Worker ya construido por el llamante,
+// p.ej. `new Worker(new URL("./worker.js", import.meta.url), { type: "module" })`
+// que Vite o el bundler de la app empaquetan como entry de worker. Si no se da,
+// se crea uno desde `workerUrl`.
+export function createSandbox({ entryUrl, hostConfig, workerUrl, worker, limits } = {}) {
   const safe = parseLimits(limits).ok ? parseLimits(limits).value : DEFAULT_LIMITS;
-  const worker = new Worker(workerUrl, { type: "module" });
+  const extensionWorker = worker ?? new Worker(workerUrl, { type: "module" });
   let started = false;
   let dead = false;
 
@@ -150,10 +155,10 @@ export function createSandbox({ entryUrl, hostConfig, workerUrl, limits } = {}) 
     start(settings = "{}") {
       return new Promise((resolve, reject) => {
         rpcWithTimeout(
-          worker,
+          extensionWorker,
           { type: "instantiate", entryUrl, settings, hostConfig, limits: safe },
           safe.callTimeoutMs,
-          () => worker.terminate(),
+          () => extensionWorker.terminate(),
         )
           .then((message) => {
             if (message.type === "ready") {
@@ -171,12 +176,12 @@ export function createSandbox({ entryUrl, hostConfig, workerUrl, limits } = {}) 
     call(name, args = [], { timeoutMs } = {}) {
       const budget = timeoutMs ?? safe.callTimeoutMs;
       return rpcWithTimeout(
-        worker,
+        extensionWorker,
         { type: "call", name, args },
         budget,
         () => {
           dead = true;
-          worker.terminate();
+          extensionWorker.terminate();
         },
       )
         .then(readResult)
@@ -193,7 +198,7 @@ export function createSandbox({ entryUrl, hostConfig, workerUrl, limits } = {}) 
     },
     terminate() {
       dead = true;
-      worker.terminate();
+      extensionWorker.terminate();
     },
   };
   return sandbox;
